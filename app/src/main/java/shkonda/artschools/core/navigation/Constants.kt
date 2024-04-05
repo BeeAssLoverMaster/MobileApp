@@ -13,3 +13,10 @@ object BottomNavItems {
         BottomNavItem.Profile
     )
 }
+
+object NavNames {
+    const val confirm_account_screen = "confirm_account_screen"
+    const val forgot_password_screen = "forgot_password_screen"
+    const val edit_profile_screen = "edit_profile_screen"
+    const val update_quiz_screen = "update_quiz_screen"
+}

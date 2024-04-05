@@ -35,6 +35,7 @@ import shkonda.artschools.core.ui.components.CustomScaffold
 import shkonda.artschools.core.ui.theme.Black
 import shkonda.artschools.core.ui.theme.TransparentWhite
 import shkonda.artschools.presentation.home.HomeScreen
+import shkonda.artschools.presentation.profile.ProfileScreen
 import shkonda.artschools.presentation.sign_in.SignInScreen
 import shkonda.artschools.presentation.sign_up.SignUpScreen
 
@@ -84,6 +85,9 @@ fun NavGraph(
             }
             composable(NavScreen.HomeScreen.route) {
                 HomeScreen()
+            }
+            composable(NavScreen.ProfileScreen.route) {
+                ProfileScreen()
             }
         }
 

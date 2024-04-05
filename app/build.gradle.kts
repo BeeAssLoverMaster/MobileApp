@@ -51,6 +51,12 @@ android {
     }
 }
 
+allprojects {
+    repositories {
+        maven { url = uri("https://www.jitpack.io" ) }
+    }
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -106,7 +112,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-insets:0.25.1")
 
     // Custom Slider
-//    implementation("com.github.SmartToolFactory:Compose-Colorful-Sliders:1.1.0")
+    implementation("com.github.SmartToolFactory:Compose-Colorful-Sliders:1.2.2")
 
     //Material
     implementation("androidx.compose.material:material:1.3.1")

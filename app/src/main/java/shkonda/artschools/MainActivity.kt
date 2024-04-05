@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import shkonda.artschools.core.common.getToken
 import shkonda.artschools.core.navigation.NavGraph
+import shkonda.artschools.core.navigation.NavScreen
 import shkonda.artschools.core.ui.theme.ArtSchoolsTheme
 import shkonda.artschools.presentation.sign_in.SignInScreen
 import javax.inject.Inject
@@ -34,7 +36,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavGraph()
+//                    if (sharedPreferences.getToken().isNullOrEmpty()) {
+//                        NavGraph()
+//                    } else {
+//                        NavGraph(startDestination = NavScreen.HomeScreen.route,)
+//                    }
+                    NavGraph(startDestination = NavScreen.SignInScreen.route)
                 }
             }
         }
