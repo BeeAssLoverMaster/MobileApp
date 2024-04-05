@@ -1,4 +1,4 @@
-package shkonda.artschools.ui.theme
+package shkonda.artschools.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

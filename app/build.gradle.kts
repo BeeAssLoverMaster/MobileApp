@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.devtools.ksp")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -66,4 +68,52 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    val dagger_hilt_version = "2.51"
+    implementation("com.google.dagger:dagger:$dagger_hilt_version")
+    ksp("com.google.dagger:dagger-compiler:$dagger_hilt_version")
+
+    implementation("com.google.dagger:hilt-android:$dagger_hilt_version")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    ksp("com.google.dagger:hilt-android-compiler:$dagger_hilt_version")
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
+    // Compose Animation
+    implementation("androidx.compose.animation:animation-graphics:1.3.3")
+
+    // Compose Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Encrypted Shared Preference
+    implementation("androidx.security:security-crypto:1.0.0")
+    // For Identity Credential APIs
+    implementation("androidx.security:security-identity-credential:1.0.0-alpha03")
+    // For App Authentication APIs
+    implementation("androidx.security:security-app-authenticator:1.0.0-alpha02")
+
+    // Okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+
+    // System UI Controller - Accompanist
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.23.1")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.25.1")
+    implementation("com.google.accompanist:accompanist-insets:0.25.1")
+
+    // Custom Slider
+//    implementation("com.github.SmartToolFactory:Compose-Colorful-Sliders:1.1.0")
+
+    //Material
+    implementation("androidx.compose.material:material:1.3.1")
+
+
+    // Coil
+    implementation("io.coil-kt:coil:2.1.0")
+    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("io.coil-kt:coil-gif:2.1.0")
 }
