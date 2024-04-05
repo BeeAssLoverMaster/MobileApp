@@ -3,7 +3,6 @@ package shkonda.artschools.presentation.sign_in
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -101,7 +100,7 @@ private fun SignIn(
             TitleSection(modifier = modifier)
             SignInSection(modifier = modifier, viewModel = viewModel)
             SignInButton(modifier = modifier, viewModel = viewModel)
-            RegisterNow(modifier = modifier, onNavigate = { viewModel.navigateRegisterScreen() })
+            RegisterNow(modifier = modifier, onNavigate = { viewModel.navigateSignUpScreen() })
         }
         is SignInState.Loading -> {
             Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {

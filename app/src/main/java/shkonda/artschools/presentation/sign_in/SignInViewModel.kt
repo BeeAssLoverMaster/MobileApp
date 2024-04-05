@@ -84,7 +84,7 @@ class SignInViewModel @Inject constructor(
                             storeToken(token = response.data.token)
                         }
 
-//                        Navigator.navigate(NavScreen.HomeScreen.route) {}
+                        Navigator.navigate(NavScreen.HomeScreen.route) {}
                     }
                     is Response.Error -> {
                         _signInState.value = SignInState.Error(errorMessage = response.errorMessage)
@@ -143,8 +143,8 @@ class SignInViewModel @Inject constructor(
             true
         }
 
-    fun navigateRegisterScreen() {
-        Navigator.navigate(NavScreen.RegisterScreen.route) {}
+    fun navigateSignUpScreen() {
+        Navigator.navigate(NavScreen.SignUpScreen.route) {}
     }
 
     fun resetShowForPas() { showForgotPasswordScreen = false }

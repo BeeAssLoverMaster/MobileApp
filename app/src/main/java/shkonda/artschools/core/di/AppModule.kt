@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import shkonda.artschools.data.data_source.auth.api.AuthApi
+import shkonda.artschools.data.data_source.user.api.UserApi
 import javax.inject.Singleton
 
 const val BASE_URL = "http://10.0.2.2:8080"
@@ -24,7 +25,7 @@ object AppModule {
             .create(AuthApi::class.java)
     }
 
-    /*@Provides
+    @Provides
     @Singleton
     fun provideUserApi(): UserApi {
         return Retrofit.Builder()
@@ -32,5 +33,5 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(UserApi::class.java)
-    }*/
+    }
 }
