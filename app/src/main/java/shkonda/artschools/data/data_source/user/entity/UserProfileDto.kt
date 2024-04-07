@@ -3,6 +3,7 @@ package shkonda.artschools.data.data_source.user.entity
 import com.google.gson.annotations.SerializedName
 
 data class UserProfileDto(
+//    @SerializedName("username") val username: String,
     @SerializedName("username") val userName: String,
     @SerializedName("firstname") val firstName: String,
     @SerializedName("lastname") val lastName: String,

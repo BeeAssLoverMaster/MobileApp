@@ -2,6 +2,7 @@ package shkonda.artschools.data.data_source.user
 
 import okhttp3.MultipartBody
 import shkonda.artschools.data.data_source.user.api.UserApi
+import shkonda.artschools.data.data_source.user.entity.UpdateProfileBodyDto
 import shkonda.artschools.data.data_source.user.entity.UserProfileDto
 import javax.inject.Inject
 
@@ -14,8 +15,8 @@ class UserRemoteDataSourceImpl @Inject constructor(private val api: UserApi) : U
         updatePasswordBodyDto: UpdatePasswordBodyDto
     ) = api.updatePassword(token = token, updatePasswordBodyDto = updatePasswordBodyDto)*/
 
-    /*override suspend fun updateProfile(token: String, updateProfileBodyDto: UpdateProfileBodyDto) =
-        api.updateProfile(token = token, updateProfileBodyDto = updateProfileBodyDto)*/
+    override suspend fun updateProfile(token: String, updateProfileBodyDto: UpdateProfileBodyDto) =
+        api.updateProfile(token = token, updateProfileBodyDto = updateProfileBodyDto)
 
     override suspend fun uploadProfilePicture(token: String, file: MultipartBody.Part) =
         api.uploadProfilePicture(token = token, file = file)

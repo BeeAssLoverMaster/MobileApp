@@ -4,6 +4,7 @@ import androidx.navigation.NavOptionsBuilder
 import kotlinx.coroutines.flow.MutableStateFlow
 
 object Navigator {
+
     var destination: MutableStateFlow<String> = MutableStateFlow("")
     var navOptionsBuilder: NavOptionsBuilder.() -> Unit = {}
 

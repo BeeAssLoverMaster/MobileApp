@@ -27,17 +27,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import shkonda.artschools.core.ui.components.CustomScaffold
 import shkonda.artschools.core.ui.theme.Black
 import shkonda.artschools.core.ui.theme.TransparentWhite
+import shkonda.artschools.presentation.edit_profile.EditProfileScreen
 import shkonda.artschools.presentation.home.HomeScreen
 import shkonda.artschools.presentation.profile.ProfileScreen
 import shkonda.artschools.presentation.sign_in.SignInScreen
 import shkonda.artschools.presentation.sign_up.SignUpScreen
+import shkonda.artschools.presentation.update_profile.UpdateProfileScreen
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -47,8 +52,8 @@ fun NavGraph(
     startDestination: String = NavScreen.SignInScreen.route
 ) {
     //Может починить, в случае чего
-//    val navController = rememberNavController()
-    val navController = rememberAnimatedNavController()
+    val navController = rememberNavController()
+//    val navController = rememberAnimatedNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val destination by Navigator.destination.collectAsState()
@@ -62,8 +67,9 @@ fun NavGraph(
     }
     CustomScaffold(modifier = modifier.fillMaxSize(), content = {
         NavHost(
+            modifier = modifier.padding(it),
             navController = navController,
-            startDestination = NavScreen.SignInScreen.route,
+            startDestination = startDestination,
             enterTransition = {
                 slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Right,
@@ -88,6 +94,20 @@ fun NavGraph(
             }
             composable(NavScreen.ProfileScreen.route) {
                 ProfileScreen()
+            }
+            composable(route = NavScreen.UpdateProfileScreen.route) {
+                UpdateProfileScreen()
+            }
+            composable(
+                route = NavScreen.EditProfileScreen.route,
+                arguments = listOf(
+                    navArgument(EditProfileScreenArgs.FIRST_NAME) { type = NavType.StringType },
+                    navArgument(EditProfileScreenArgs.LAST_NAME) { type = NavType.StringType },
+                    navArgument(EditProfileScreenArgs.USER_NAME) { type = NavType.StringType },
+                    navArgument(EditProfileScreenArgs.USER_PROFILE_IMG) { type = NavType.StringType }
+                )
+            ) {
+                EditProfileScreen()
             }
         }
 

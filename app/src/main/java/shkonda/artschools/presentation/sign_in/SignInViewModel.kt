@@ -26,11 +26,12 @@ class SignInViewModel @Inject constructor(
 //    private val sendPasswordResetMailUseCase: SendPasswordResetMailUseCase,
     private val sharedPreferences: SharedPreferences
 
-) : ViewModel(){
+) : ViewModel() {
     private val _signInState = MutableStateFlow<SignInState>(SignInState.Nothing)
     val signInState = _signInState.asStateFlow()
 
-    private val _signInInputFieldState = MutableStateFlow<SignInInputFieldState>(SignInInputFieldState.Nothing)
+    private val _signInInputFieldState =
+        MutableStateFlow<SignInInputFieldState>(SignInInputFieldState.Nothing)
     val signInInputFieldState = _signInInputFieldState.asStateFlow()
 
     /*private val _forgotPasswordState = MutableStateFlow<ForgotPasswordState>(ForgotPasswordState.Nothing)
@@ -71,11 +72,18 @@ class SignInViewModel @Inject constructor(
 
     fun signIn() = viewModelScope.launch(Dispatchers.IO) {
         if (checkInputFields()) {
-            signInUseCase(login = Login(username = username, email = email, password = password)).collect() { response ->
+            signInUseCase(
+                login = Login(
+                    username = username,
+                    email = email,
+                    password = password
+                )
+            ).collect() { response ->
                 when (response) {
                     is Response.Loading -> {
                         _signInState.value = SignInState.Loading
                     }
+
                     is Response.Success -> {
                         _signInState.value = SignInState.Success(data = response.data)
 
@@ -86,6 +94,7 @@ class SignInViewModel @Inject constructor(
 
                         Navigator.navigate(NavScreen.HomeScreen.route) {}
                     }
+
                     is Response.Error -> {
                         _signInState.value = SignInState.Error(errorMessage = response.errorMessage)
                     }
@@ -94,22 +103,39 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun updateUsernameField(newValue: String) { username = newValue }
-    fun updateEmailField(newValue: String) { email = newValue }
+    fun updateUsernameField(newValue: String) {
+        username = newValue
+    }
 
-    fun updatePasswordField(newValue: String) { password = newValue }
+    fun updateEmailField(newValue: String) {
+        email = newValue
+    }
 
-    fun updateForgotPasswordField(newValue: String) { forgotPasswordEmail = newValue }
+    fun updatePasswordField(newValue: String) {
+        password = newValue
+    }
 
-    fun resetSignInputState() { _signInInputFieldState.value = SignInInputFieldState.Nothing }
+    fun updateForgotPasswordField(newValue: String) {
+        forgotPasswordEmail = newValue
+    }
 
-    fun resetSignInState() { _signInState.value = SignInState.Nothing }
+    fun resetSignInputState() {
+        _signInInputFieldState.value = SignInInputFieldState.Nothing
+    }
+
+    fun resetSignInState() {
+        _signInState.value = SignInState.Nothing
+    }
 
 //    fun resetForgotPasswordState() { _forgotPasswordState.value = ForgotPasswordState.Nothing }
 
-    fun resetShowForgotPasScr() { showForgotPasswordScreen = false }
+    fun resetShowForgotPasScr() {
+        showForgotPasswordScreen = false
+    }
 
-    fun openForgotPasswordScreen() { showForgotPasswordScreen = true }
+    fun openForgotPasswordScreen() {
+        showForgotPasswordScreen = true
+    }
 
     private fun checkInputFields(): Boolean =
         if (username.isBlank() && email.isBlank() && password.isBlank()) {
@@ -147,5 +173,7 @@ class SignInViewModel @Inject constructor(
         Navigator.navigate(NavScreen.SignUpScreen.route) {}
     }
 
-    fun resetShowForPas() { showForgotPasswordScreen = false }
+    fun resetShowForPas() {
+        showForgotPasswordScreen = false
+    }
 }

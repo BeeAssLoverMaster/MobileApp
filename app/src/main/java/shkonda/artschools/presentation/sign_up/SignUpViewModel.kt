@@ -27,7 +27,7 @@ class SignUpViewModel @Inject constructor(
     private val _registerInputFieldsState =
         MutableStateFlow<RegisterInputFieldState>(RegisterInputFieldState.Nothing)
     val registerInputFieldState = _registerInputFieldsState.asStateFlow()
-    var userName by mutableStateOf("")
+    var username by mutableStateOf("")
         private set
     var userEmail by mutableStateOf("")
         private set
@@ -47,7 +47,7 @@ class SignUpViewModel @Inject constructor(
 
 
     fun updateUserNameField(newValue: String) {
-        userName = newValue
+        username = newValue
     }
 
     fun updateUserEmailField(newValue: String) {
@@ -71,7 +71,7 @@ class SignUpViewModel @Inject constructor(
         if (checkRegisterInputField()) {
             createUserUseCase(
                 user = User(
-                    username = userName,
+                    username = username,
                     email = userEmail,
                     password = userPassword
                 )
@@ -103,7 +103,7 @@ class SignUpViewModel @Inject constructor(
         }
 
     private fun checkInputFields(): Boolean =
-        if (userName.isBlank() || userEmail.isBlank() || userPassword.isBlank() /*|| userConfirmPassword.isBlank()*/) {
+        if (username.isBlank() || userEmail.isBlank() || userPassword.isBlank() /*|| userConfirmPassword.isBlank()*/) {
             _registerInputFieldsState.value =
                 RegisterInputFieldState.Error(errorMessage = Messages.FILL)
 
@@ -148,7 +148,7 @@ class SignUpViewModel @Inject constructor(
         }
 
     private fun checkUserName(): Boolean =
-        if (userName.length < 3) {
+        if (username.length < 3) {
             _registerInputFieldsState.value =
                 RegisterInputFieldState.Error(errorMessage = Messages.USER_NAME_LENGTH)
             userNameError = true

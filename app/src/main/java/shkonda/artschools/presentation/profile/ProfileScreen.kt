@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -33,22 +31,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import shkonda.artschools.R
-import shkonda.artschools.core.common.encodeForSafe
 import shkonda.artschools.core.common.loadImage
-import shkonda.artschools.core.navigation.NavNames
-import shkonda.artschools.core.navigation.Navigator
 import shkonda.artschools.core.ui.components.CustomLoadingSpinner
 import shkonda.artschools.core.ui.components.CustomSlider
 import shkonda.artschools.core.ui.theme.WhiteSmoke
@@ -78,7 +71,7 @@ private fun ProfileScreenContent(
     getUserProfileState: GetUserProfileState,
     viewModel: ProfileViewModel
 ) {
-    Scaffold(topBar = { TopAppBar(userData = viewModel.userData) }) {
+    Scaffold(topBar = { TopAppBar(userData = viewModel.userData, viewModel = viewModel) }) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -97,17 +90,15 @@ private fun ProfileScreenContent(
                         CustomLoadingSpinner()
                     }
                 }
+
                 is GetUserProfileState.Success -> {
                     ProfileDetailSection(
                         modifier = modifier,
-                        userName = getUserProfileState.data.userName,
-                        biography = getUserProfileState.data.biography ?: "",
-                        score = getUserProfileState.data.score,
+                        username = getUserProfileState.data.userName,
                         userProfileImg = getUserProfileState.data.profilePictureUrl
                     )
-                    /*AchievementsSection(modifier = modifier)
-                    InventorySection(modifier = modifier)*/
                 }
+
                 is GetUserProfileState.Error -> {
                     ErrorSection(
                         modifier = modifier,
@@ -122,9 +113,7 @@ private fun ProfileScreenContent(
 @Composable
 private fun ProfileDetailSection(
     modifier: Modifier,
-    userName: String,
-    biography: String,
-    score: Int,
+    username: String,
     userProfileImg: String
 ) {
     Column(
@@ -132,26 +121,20 @@ private fun ProfileDetailSection(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileImage(modifier = modifier, userProfileImg = userProfileImg)
-        ProfileInfo(modifier = modifier, userName = userName, biography = biography, score = score)
+        ProfileInfo(
+            modifier = modifier, username = username
+        )
     }
 }
 
 @Composable
-private fun TopAppBar(userData: UserProfile?) {
+private fun TopAppBar(userData: UserProfile?, viewModel: ProfileViewModel) {
     androidx.compose.material.TopAppBar(
         title = {},
         navigationIcon = {
             IconButton(
                 onClick = {
-                    if (userData != null) {
-                        Navigator.navigate(
-                            "${NavNames.edit_profile_screen}/${userData.firstName}/${userData.lastName}/${userData.userName}/${
-                                encodeForSafe(
-                                    userData.profilePictureUrl
-                                )
-                            }"
-                        ) {}
-                    }
+                    viewModel.signIn()
                 }
             ) {
                 Icon(
@@ -186,130 +169,30 @@ private fun ProfileImage(modifier: Modifier, userProfileImg: String) {
 }
 
 @Composable
-private fun ProfileInfo(modifier: Modifier, userName: String, biography: String, score: Int) {
+private fun ProfileInfo(
+    modifier: Modifier, username: String
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UserNameAndBiography(userName = userName, biography = biography)
-        UserLevelAndStatistics(modifier = modifier, score = score)
+        UserNameAndBiography(
+            username = username
+        )
     }
 }
 
 @Composable
-private fun UserNameAndBiography(userName: String, biography: String) {
+private fun UserNameAndBiography(
+    username: String
+) {
     Text(
-        text = userName,
+        text = username,
         style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
         color = MaterialTheme.colors.primaryVariant
     )
-    Text(
-        text = biography,
-        style = MaterialTheme.typography.h5,
-        color = MaterialTheme.colors.primaryVariant
-    )
-}
-
-@Composable
-private fun UserLevelAndStatistics(modifier: Modifier, score: Int) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp)
-            .clip(shape = RoundedCornerShape(20))
-    ) {
-        Column {
-            LevelSlider(modifier = modifier)
-        }
-    }
-}
-
-@Composable
-private fun LevelSlider(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-    ) {
-        Text(
-            modifier = modifier.fillMaxWidth(),
-            text = "4000 / 10000 XP",
-            style = MaterialTheme.typography.h6.copy(color = Color.Gray),
-            textAlign = TextAlign.End,
-            color = MaterialTheme.colors.primaryVariant
-        )
-        CustomSlider(
-            modifier = modifier.fillMaxWidth(),
-            trackHeight = 12.dp,
-            onValueChange = { value -> },
-            value = 40f
-        )
-    }
-}
-//
-//@Composable
-//private fun UserStatistics(modifier: Modifier, score: Int) {
-//    Row(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Statistics(
-//            modifier = modifier.padding(start = 4.dp),
-//            iconId = R.drawable.ic_baseline_arrow_circle_up,
-//            value = score,
-//            description = "Score"
-//        )
-//        Statistics(
-//            modifier = modifier.padding(start = 4.dp),
-//            iconId = R.drawable.ic_baseline_check_circle,
-//            value = 218,
-//            description = "Correct Answers"
-//        )
-//    }
-//}
-
-@Composable
-private fun Statistics(modifier: Modifier, iconId: Int, value: Int, description: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        OutlinedButton(
-            modifier = modifier.size(48.dp),
-            onClick = {},
-            enabled = false,
-            elevation = ButtonDefaults.elevation(disabledElevation = 8.dp),
-            border = BorderStroke(
-                width = 0.dp,
-                color = Color.Transparent
-            ),
-            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.White),
-            shape = RoundedCornerShape(25),
-            contentPadding = PaddingValues(0.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = iconId),
-                contentDescription = null,
-                tint = Color.Black
-            )
-        }
-        Column(
-            modifier = modifier.padding(start = 8.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "$value",
-                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colors.primaryVariant
-            )
-            Text(
-                text = description, style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.primaryVariant
-            )
-        }
-    }
 }
 
 @Composable

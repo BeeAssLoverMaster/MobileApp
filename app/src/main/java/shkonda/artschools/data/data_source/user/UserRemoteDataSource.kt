@@ -1,6 +1,7 @@
 package shkonda.artschools.data.data_source.user
 
 import okhttp3.MultipartBody
+import shkonda.artschools.data.data_source.user.entity.UpdateProfileBodyDto
 import shkonda.artschools.data.data_source.user.entity.UserProfileDto
 
 interface UserRemoteDataSource {
@@ -9,7 +10,7 @@ interface UserRemoteDataSource {
 
 //    suspend fun updatePassword(token: String, updatePasswordBodyDto: UpdatePasswordBodyDto)
 
-//    suspend fun updateProfile(token: String, updateProfileBodyDto: UpdateProfileBodyDto)
+    suspend fun updateProfile(token: String, updateProfileBodyDto: UpdateProfileBodyDto)
 
     suspend fun uploadProfilePicture(token: String, file: MultipartBody.Part)
 

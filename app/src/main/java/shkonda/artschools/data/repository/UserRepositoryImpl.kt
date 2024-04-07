@@ -2,7 +2,9 @@ package shkonda.artschools.data.repository
 
 import okhttp3.MultipartBody
 import shkonda.artschools.data.data_source.user.UserRemoteDataSource
+import shkonda.artschools.data.mappers.toUpdateProfileBodyDto
 import shkonda.artschools.data.mappers.toUserProfile
+import shkonda.artschools.domain.model.user.UpdateProfileBody
 import shkonda.artschools.domain.model.user.UserProfile
 import shkonda.artschools.domain.repository.UserRepository
 import javax.inject.Inject
@@ -18,11 +20,11 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: UserR
              updatePasswordBodyDto = updatePasswordBody.toUpdatePasswordBodyDto()
          )*/
 
-    /*override suspend fun updateProfile(token: String, updateProfileBody: UpdateProfileBody) =
+    override suspend fun updateProfile(token: String, updateProfileBody: UpdateProfileBody) =
         remoteDataSource.updateProfile(
             token = token,
             updateProfileBodyDto = updateProfileBody.toUpdateProfileBodyDto()
-        )*/
+        )
 
     override suspend fun uploadProfilePicture(token: String, file: MultipartBody.Part) =
         remoteDataSource.uploadProfilePicture(token = token, file = file)

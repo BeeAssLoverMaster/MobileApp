@@ -36,12 +36,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    if (sharedPreferences.getToken().isNullOrEmpty()) {
-//                        NavGraph()
-//                    } else {
-//                        NavGraph(startDestination = NavScreen.HomeScreen.route,)
-//                    }
-                    NavGraph(startDestination = NavScreen.SignInScreen.route)
+                    if (sharedPreferences.getToken().isNullOrEmpty()) {
+                        NavGraph()
+                    } else {
+                        NavGraph(startDestination = NavScreen.HomeScreen.route,)
+                    }
+//                    NavGraph(startDestination = NavScreen.SignInScreen.route)
                 }
             }
         }

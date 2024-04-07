@@ -115,7 +115,7 @@ fun InputSection(
 ) {
     OTFCustom(
         modifier = Modifier.fillMaxWidth(),
-        value = viewModel.userName,
+        value = viewModel.username,
         onValueChanged = { viewModel.updateUserNameField(newValue = it) },
         placeHolderText = "Логин",
         isError = viewModel.userNameError

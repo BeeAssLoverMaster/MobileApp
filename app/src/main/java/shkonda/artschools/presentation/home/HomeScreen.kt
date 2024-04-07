@@ -107,7 +107,8 @@ fun TopBarSection(
                 )
                 UserNameLevel(
                     modifier = modifier,
-                    userName = userState.data.userName
+//                    username = userState.data.username
+                    username = userState.data.userName
                 )
                 //Notifications
             }
@@ -146,7 +147,7 @@ private fun ProfileImage(
 }
 
 @Composable
-private fun UserNameLevel(modifier: Modifier, userName: String) {
+private fun UserNameLevel(modifier: Modifier, username: String) {
     Column(
         modifier = modifier
             .fillMaxHeight()
@@ -155,7 +156,7 @@ private fun UserNameLevel(modifier: Modifier, userName: String) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Hello, $userName",
+            text = "Hello, $username",
             style = MaterialTheme.typography.body2.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primaryVariant
