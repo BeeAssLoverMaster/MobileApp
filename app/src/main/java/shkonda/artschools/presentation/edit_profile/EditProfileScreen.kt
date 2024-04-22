@@ -1,15 +1,37 @@
 package shkonda.artschools.presentation.edit_profile
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,18 +39,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.quizapp.presentation.edit_profile.EditProfileViewModel
+import shkonda.artschools.DataStoreManager
 import shkonda.artschools.R
 import shkonda.artschools.core.common.loadImage
 import shkonda.artschools.core.navigation.NavScreen
 import shkonda.artschools.core.navigation.Navigator
-import shkonda.artschools.core.ui.components.CustomLoadingSpinner
 import shkonda.artschools.core.ui.components.CustomTopBarTitle
-import shkonda.artschools.presentation.home.UserState
 import shkonda.artschools.presentation.utils.EditProfileScreenPreferencesNames
 
 private val SETTINGS_PROFILE_IMG_SIZE = 108.dp
@@ -39,24 +58,41 @@ fun EditProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
-//    BackHandler {
-//        Navigator.navigate(NavScreen.ProfileScreen.route)
-//    }
-    val userState by viewModel.userState.collectAsState()
+    val dataStoreManager = DataStoreManager(LocalContext.current)
+
+    var username by remember {
+        mutableStateOf("")
+    }
+    var userImg by remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(key1 = true) {
+        dataStoreManager.getUserData().collect { data ->
+            username = data.userName
+            userImg = data.profilePictureUrl
+
+        }
+    }
+
+    BackHandler {
+        Navigator.navigate(NavScreen.ProfileScreen.route)
+    }
 
     EditProfileScreenContent(
         modifier = modifier,
-        userState = userState,
-        viewModel = viewModel
+        viewModel = viewModel,
+        username = username,
+        userImage = userImg
     )
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-private fun EditProfileScreenContent(
+fun EditProfileScreenContent(
     modifier: Modifier,
-    userState: UserState,
-    viewModel: EditProfileViewModel
+    viewModel: EditProfileViewModel,
+    username: String,
+    userImage: String
 ) {
     Box(
         modifier = modifier
@@ -64,54 +100,33 @@ private fun EditProfileScreenContent(
             .padding(top = 16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        CustomTopBarTitle(
-            modifier = modifier,
-            title = "Edit Profile"
-        )
+        CustomTopBarTitle(modifier = modifier, title = "Edit Profile")
     }
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when(userState) {
-            is UserState.Nothing -> {}
-            is UserState.Loading -> {
-                Box(
-                    modifier
-                        .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    CustomLoadingSpinner()
-                }
+        ProfileSection(
+            modifier = modifier,
+//            username = viewModel.username,
+//            userImage = viewModel.profilePicture,
+            username = username,
+            userImage = userImage,
+            onEditProfileClick = {
+                Navigator.navigate(NavScreen.UpdateProfileScreen.route)
+            },
+            onPreferenceClick = {
+                viewModel.setPreferenceOnClick(it)
             }
-            is UserState.Success -> {
-                ProfileSection(
-                    modifier = modifier,
-                    userName = userState.data.userName,
-                    userImage = userState.data.profilePictureUrl,
-                    onEditProfileClick = {
-                        Navigator.navigate(NavScreen.UpdateProfileScreen.route)
-                    },
-                    onPreferenceClick = {
-                        viewModel.setPreferenceOnClick(it)
-                    }
-                )
-            }
-            is UserState.Error -> {
-                TopBarError(
-                    modifier = modifier,
-                    errorMessage = userState.errorMessage
-                )
-            }
-        }
-
+        )
     }
 }
 
 @Composable
-private fun ProfileSection(
+fun ProfileSection(
     modifier: Modifier,
-    userName: String,
+    username: String,
     userImage: String,
     onEditProfileClick: () -> Unit,
     onPreferenceClick: (String) -> Unit
@@ -129,28 +144,52 @@ private fun ProfileSection(
                 modifier = modifier,
                 userImage = userImage
             )
-            UserRealNameAndUserName(
+            Username(
                 modifier = modifier,
-                userName = userName
+                username = username
             )
-            EditProfileButton(modifier = modifier, onEditProfileClick = onEditProfileClick)
+            EditProfileButton(
+                modifier = modifier,
+                onEditProfileClick = onEditProfileClick
+            )
         }
 
-        Preferences(modifier = modifier.weight(1f), onPreferenceClick = onPreferenceClick)
+        Preferences(
+            modifier = modifier.weight(1f),
+            onPreferenceClick = onPreferenceClick
+        )
     }
 }
 
 @Composable
-private fun UserRealNameAndUserName(
+fun ProfileImage(modifier: Modifier, userImage: String) {
+    AsyncImage(
+        modifier = modifier
+            .size(SETTINGS_PROFILE_IMG_SIZE)
+            .clip(CircleShape)
+            .border(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.primaryVariant
+                ), shape = CircleShape
+            ),
+        model = loadImage(context = LocalContext.current, imageUrl = userImage),
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
+}
+
+@Composable
+fun Username(
     modifier: Modifier,
-    userName: String
+    username: String
 ) {
     Column(
         modifier = modifier.padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "@$userName",
+            text = "@$username",
             style = MaterialTheme.typography.h4,
             color = MaterialTheme.colors.primaryVariant
         )
@@ -175,7 +214,10 @@ private fun EditProfileButton(modifier: Modifier, onEditProfileClick: () -> Unit
 }
 
 @Composable
-private fun Preferences(modifier: Modifier, onPreferenceClick: (String) -> Unit) {
+fun Preferences(
+    modifier: Modifier,
+    onPreferenceClick: (String) -> Unit
+) {
     Column(
         modifier = modifier
             .background(
@@ -190,6 +232,7 @@ private fun Preferences(modifier: Modifier, onPreferenceClick: (String) -> Unit)
                 .fillMaxWidth()
                 .height(32.dp)
         )
+
         preferenceList.forEach {
             Preference(
                 iconId = it.iconId,
@@ -202,7 +245,7 @@ private fun Preferences(modifier: Modifier, onPreferenceClick: (String) -> Unit)
 }
 
 @Composable
-private fun Preference(
+fun Preference(
     modifier: Modifier = Modifier,
     iconId: Int,
     text: String,
@@ -229,25 +272,6 @@ private fun Preference(
         }
         action()
     }
-}
-
-
-@Composable
-private fun ProfileImage(modifier: Modifier, userImage: String) {
-    AsyncImage(
-        modifier = modifier
-            .size(SETTINGS_PROFILE_IMG_SIZE)
-            .clip(CircleShape)
-            .border(
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colors.primaryVariant
-                ), shape = CircleShape
-            ),
-        model = loadImage(context = LocalContext.current, imageUrl = userImage),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
 }
 
 data class PreferenceModel(
@@ -277,50 +301,6 @@ private val preferenceList = listOf(
         Switch(checked = true, onCheckedChange = {})
     },
     PreferenceModel(
-        iconId = R.drawable.ic_baseline_info,
-        text = EditProfileScreenPreferencesNames.INFORMATION,
-        onPreferenceClick = {}
-    ) {
-        Text(
-            text = ">",
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.primaryVariant
-        )
-    },
-    PreferenceModel(
-        iconId = R.drawable.ic_baseline_password,
-        text = EditProfileScreenPreferencesNames.CHANGE_PASSWORD,
-        onPreferenceClick = {}
-    ) {
-        Text(
-            text = ">",
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.primaryVariant
-        )
-    },
-    PreferenceModel(
-        iconId = R.drawable.ic_baseline_headphones,
-        text = EditProfileScreenPreferencesNames.CONTACT_US,
-        onPreferenceClick = { }
-    ) {
-        Text(
-            text = ">",
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.primaryVariant
-        )
-    },
-    PreferenceModel(
-        iconId = R.drawable.ic_baseline_delete_forever,
-        text = EditProfileScreenPreferencesNames.DELETE_ACCOUNT,
-        onPreferenceClick = {}
-    ) {
-        Text(
-            text = ">",
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.primaryVariant
-        )
-    },
-    PreferenceModel(
         iconId = R.drawable.ic_baseline_logout,
         text = EditProfileScreenPreferencesNames.LOG_OUT,
         onPreferenceClick = {}
@@ -332,26 +312,3 @@ private val preferenceList = listOf(
         )
     },
 )
-@Composable
-private fun TopBarError(modifier: Modifier, errorMessage: String) {
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Column(
-            modifier = modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                modifier = modifier.size(48.dp),
-                painter = painterResource(id = R.drawable.error_image),
-                contentDescription = "Ошибка отображения",
-                contentScale = ContentScale.Crop
-            )
-            Text(
-                modifier = modifier.padding(top = 16.dp),
-                text = errorMessage,
-                style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colors.primaryVariant
-            )
-        }
-    }
-}

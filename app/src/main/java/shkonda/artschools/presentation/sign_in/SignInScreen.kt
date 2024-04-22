@@ -3,6 +3,7 @@ package shkonda.artschools.presentation.sign_in
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -177,7 +178,7 @@ private fun TitleSection(modifier: Modifier) {
         )
         Text(
             modifier = modifier.padding(top = 16.dp, start = 54.dp, end = 54.dp),
-            text = "Welcome back you've been missed",
+            text = "Welcome back you've been missed\"",
             style = MaterialTheme.typography.h2,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.primaryVariant
@@ -199,14 +200,6 @@ private fun SignInInput(modifier: Modifier, viewModel: SignInViewModel) {
             .padding(top = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OTFCustom(
-            modifier = modifier.fillMaxWidth(),
-            onValueChanged = { viewModel.updateUsernameField(newValue = it) },
-            placeHolderText = "Enter username",
-            keyboardType = KeyboardType.Text,
-            value = viewModel.username,
-            isError = viewModel.usernameError
-        )
         OTFCustom(
             modifier = modifier.fillMaxWidth(),
             onValueChanged = { viewModel.updateEmailField(newValue = it) },
@@ -313,3 +306,10 @@ private fun ShowMessage(message: String, viewModel: SignInViewModel, isSignInCon
 //        viewModel.resetForgotPasswordState()
     }
 }
+
+//@Composable
+//private fun OnBackPressed(activity: Activity, viewModel: SignInViewModel) {
+//    BackHandler {
+//        if (!viewModel.s)
+//    }
+//}

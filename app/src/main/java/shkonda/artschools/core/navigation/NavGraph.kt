@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,7 +32,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import shkonda.artschools.core.ui.components.CustomScaffold
 import shkonda.artschools.core.ui.theme.Black
 import shkonda.artschools.core.ui.theme.TransparentWhite
@@ -100,14 +98,13 @@ fun NavGraph(
             }
             composable(
                 route = NavScreen.EditProfileScreen.route,
-                arguments = listOf(
-                    navArgument(EditProfileScreenArgs.FIRST_NAME) { type = NavType.StringType },
-                    navArgument(EditProfileScreenArgs.LAST_NAME) { type = NavType.StringType },
-                    navArgument(EditProfileScreenArgs.USER_NAME) { type = NavType.StringType },
-                    navArgument(EditProfileScreenArgs.USER_PROFILE_IMG) { type = NavType.StringType }
-                )
+//                arguments = listOf(
+//                    navArgument(EditProfileScreenArgs.USERNAME) { type = NavType.StringType },
+//                    navArgument(EditProfileScreenArgs.USER_PROFILE_IMG) { type = NavType.StringType }
+//                )
             ) {
                 EditProfileScreen()
+                println("Info from composable: ${EditProfileScreenArgs.USERNAME}, ${EditProfileScreenArgs.USER_PROFILE_IMG}")
             }
         }
 
@@ -115,7 +112,6 @@ fun NavGraph(
             modifier = modifier,
             currentRoute = currentRoute,
             navController = navController,
-            onClick = {},
         )
     })
 
@@ -125,8 +121,7 @@ fun NavGraph(
 private fun BottomAppBar(
     modifier: Modifier,
     currentRoute: String?,
-    navController: NavController,
-    onClick: () -> Unit,
+    navController: NavController
 //    showFab: Boolean
 ) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {

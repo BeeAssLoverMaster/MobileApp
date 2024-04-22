@@ -8,8 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,61 +15,71 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.datastore.dataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import shkonda.artschools.DataStoreManager
 import shkonda.artschools.R
 import shkonda.artschools.core.common.loadImage
+import shkonda.artschools.core.navigation.NavNames
+import shkonda.artschools.core.navigation.NavScreen
+import shkonda.artschools.core.navigation.Navigator
+import shkonda.artschools.core.ui.OnBackPressed
 import shkonda.artschools.core.ui.components.CustomLoadingSpinner
-import shkonda.artschools.core.ui.components.CustomSlider
 import shkonda.artschools.core.ui.theme.WhiteSmoke
 import shkonda.artschools.domain.model.user.UserProfile
-import shkonda.artschools.domain.utils.Dimens
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier, viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
 
+    val dataStoreManager = DataStoreManager(LocalContext.current)
     val getUserProfileState by viewModel.getUserProfileState.collectAsState()
 
-    val activity = LocalContext.current as Activity
 
-//    OnBackPressed(activity = activity)
+    val activity = LocalContext.current as Activity
+    OnBackPressed(activity = activity)
 
     ProfileScreenContent(
         modifier = modifier,
         getUserProfileState = getUserProfileState,
+        dataStoreManager = dataStoreManager,
         viewModel = viewModel
     )
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-private fun ProfileScreenContent(
+fun ProfileScreenContent(
     modifier: Modifier,
     getUserProfileState: GetUserProfileState,
+    dataStoreManager: DataStoreManager,
     viewModel: ProfileViewModel
 ) {
-    Scaffold(topBar = { TopAppBar(userData = viewModel.userData, viewModel = viewModel) }) {
+    Scaffold(topBar = { TopAppBar(userData = viewModel.userData, dataStoreManager) }) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -80,7 +88,7 @@ private fun ProfileScreenContent(
                     start = 16.dp,
                     end = 16.dp,
                     top = 16.dp,
-                    bottom = 32.dp + Dimens.AppBarDefaultHeight
+                    bottom = 32.dp
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -111,35 +119,35 @@ private fun ProfileScreenContent(
 }
 
 @Composable
-private fun ProfileDetailSection(
-    modifier: Modifier,
-    username: String,
-    userProfileImg: String
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ProfileImage(modifier = modifier, userProfileImg = userProfileImg)
-        ProfileInfo(
-            modifier = modifier, username = username
-        )
-    }
-}
-
-@Composable
-private fun TopAppBar(userData: UserProfile?, viewModel: ProfileViewModel) {
+private fun TopAppBar(userData: UserProfile?, dataStoreManager: DataStoreManager) {
+    val coroutine = rememberCoroutineScope()
     androidx.compose.material.TopAppBar(
         title = {},
         navigationIcon = {
-            IconButton(
-                onClick = {
-                    viewModel.signIn()
+            IconButton(onClick = {
+
+                //Возможно проверка была в ошибке, проверь что вообще содержится в userData, Возможно она пуста
+                if (userData != null) {
+                    println("userData: $userData \nuserData.userName: ${userData.userName}\nuserData.profilePictureUrl: ${userData.profilePictureUrl}")
+                    println("${NavNames.edit_profile_screen}/${userData.userName}/${userData.profilePictureUrl}")
+                    println(NavScreen.EditProfileScreen.route)
+//                    Navigator.navigate(
+////                        "${NavNames.edit_profile_screen}/${userData.userName}/${userData.profilePictureUrl}"
+//                        "$NavNames.edit_profile_screen"
+//                    ) {}
+                    coroutine.launch {
+                        dataStoreManager.saveUserData(userData)
+                    }
+
+                    Navigator.navigate(
+//                        "${NavNames.edit_profile_screen}/${userData.userName}/${userData.profilePictureUrl}"
+                        NavScreen.EditProfileScreen.route
+                    ) {}
                 }
-            ) {
+            }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_settings),
-                    contentDescription = null,
+                    contentDescription = "настройки",
                     tint = WhiteSmoke
                 )
             }
@@ -151,7 +159,25 @@ private fun TopAppBar(userData: UserProfile?, viewModel: ProfileViewModel) {
 }
 
 @Composable
-private fun ProfileImage(modifier: Modifier, userProfileImg: String) {
+fun ProfileDetailSection(
+    modifier: Modifier,
+    username: String,
+    userProfileImg: String
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ProfileImage(modifier = modifier, userProfileImg = userProfileImg)
+        ProfileInfo(modifier = modifier, username = username)
+    }
+}
+
+@Composable
+fun ProfileImage(
+    modifier: Modifier,
+    userProfileImg: String
+) {
     AsyncImage(
         modifier = modifier
             .size(144.dp)
@@ -163,31 +189,25 @@ private fun ProfileImage(modifier: Modifier, userProfileImg: String) {
                 ), shape = RoundedCornerShape(20)
             ),
         model = loadImage(context = LocalContext.current, imageUrl = userProfileImg),
-        contentDescription = null,
+        contentDescription = "Изображение профиля",
         contentScale = ContentScale.Crop
     )
 }
 
 @Composable
-private fun ProfileInfo(
-    modifier: Modifier, username: String
-) {
+fun ProfileInfo(modifier: Modifier, username: String) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UserNameAndBiography(
-            username = username
-        )
+        Username(username = username)
     }
 }
 
 @Composable
-private fun UserNameAndBiography(
-    username: String
-) {
+fun Username(username: String) {
     Text(
         text = username,
         style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
@@ -196,7 +216,7 @@ private fun UserNameAndBiography(
 }
 
 @Composable
-private fun ErrorSection(modifier: Modifier, errorMessage: String) {
+fun ErrorSection(modifier: Modifier, errorMessage: String) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -205,14 +225,14 @@ private fun ErrorSection(modifier: Modifier, errorMessage: String) {
         Image(
             modifier = modifier.size(96.dp),
             painter = painterResource(id = R.drawable.error_image),
-            contentDescription = null,
+            contentDescription = "Ошибка",
             contentScale = ContentScale.Crop
         )
         Text(
+            text = errorMessage,
             modifier = modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            text = errorMessage,
             style = MaterialTheme.typography.h3.copy(fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colors.primaryVariant,
             textAlign = TextAlign.Center

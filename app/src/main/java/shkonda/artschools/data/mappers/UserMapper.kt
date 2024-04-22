@@ -19,11 +19,11 @@ import shkonda.artschools.domain.model.user.UserProfile
 fun UserProfileDto.toUserProfile(): UserProfile {
     return UserProfile(
         userName = userName,
-        firstName = firstName,
-        lastName = lastName,
+//        firstName = firstName,
+//        lastName = lastName,
         profilePictureUrl = profilePictureUrl,
-        score = score,
-        biography = biography
+//        score = score,
+//        biography = biography
     )
 }
 

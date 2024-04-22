@@ -41,40 +41,26 @@ class SignInViewModel @Inject constructor(
         private set
     var forgotPasswordEmail by mutableStateOf("")
         private set
-    var username by mutableStateOf("test0")
-        private set
-    var email by mutableStateOf("test0@gmail.com")
+//    var username by mutableStateOf("appMobile")
+//        private set
+    var email by mutableStateOf("app@gmail.com")
         private set
     var password by mutableStateOf("123456")
         private set
 
-    var usernameError by mutableStateOf(false)
-        private set
+//    var usernameError by mutableStateOf(false)
+//        private set
     var emailError by mutableStateOf(false)
         private set
     var passwordError by mutableStateOf(false)
         private set
-    /*fun forgotPassword() = viewModelScope.launch(Dispatchers.IO) {
-        sendPasswordResetMailUseCase(sendPasswordResetMail = SendPasswordResetMail(email = forgotPasswordEmail)).collect() { response ->
-            when (response) {
-                is Response.Loading -> {
-                    _forgotPasswordState.value = ForgotPasswordState.Loading
-                }
-                is Response.Success -> {
-                    _forgotPasswordState.value = ForgotPasswordState.Success
-                }
-                is Response.Error -> {
-                    _forgotPasswordState.value = ForgotPasswordState.Error(errorMessage = response.errorMessage)
-                }
-            }
-        }
-    }*/
+
 
     fun signIn() = viewModelScope.launch(Dispatchers.IO) {
         if (checkInputFields()) {
             signInUseCase(
                 login = Login(
-                    username = username,
+//                    username = username,
                     email = email,
                     password = password
                 )
@@ -103,9 +89,9 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun updateUsernameField(newValue: String) {
-        username = newValue
-    }
+//    fun updateUsernameField(newValue: String) {
+//        username = newValue
+//    }
 
     fun updateEmailField(newValue: String) {
         email = newValue
@@ -138,32 +124,32 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun checkInputFields(): Boolean =
-        if (username.isBlank() && email.isBlank() && password.isBlank()) {
+        if (/*username.isBlank() &&*/ email.isBlank() && password.isBlank()) {
             _signInInputFieldState.value = SignInInputFieldState.Error(errorMessage = Messages.FILL)
-            usernameError = true
+//            usernameError = true
             emailError = true
             passwordError = true
             false
-        } else if (username.isBlank()) {
+        } /*else if (username.isBlank()) {
             _signInInputFieldState.value = SignInInputFieldState.Error(errorMessage = Messages.FILL)
             usernameError = true
             emailError = false
             passwordError = false
             false
-        } else if (email.isBlank()) {
+        }*/ else if (email.isBlank()) {
             _signInInputFieldState.value = SignInInputFieldState.Error(errorMessage = Messages.FILL)
-            usernameError = false
+//            usernameError = false
             emailError = true
             passwordError = false
             false
         } else if (password.isBlank()) {
             _signInInputFieldState.value = SignInInputFieldState.Error(errorMessage = Messages.FILL)
-            usernameError = false
+//            usernameError = false
             passwordError = true
             emailError = false
             false
         } else {
-            usernameError = false
+//            usernameError = false
             emailError = false
             passwordError = false
             true

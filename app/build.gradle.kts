@@ -122,4 +122,7 @@ dependencies {
     implementation("io.coil-kt:coil:2.1.0")
     implementation("io.coil-kt:coil-compose:2.1.0")
     implementation("io.coil-kt:coil-gif:2.1.0")
+
+    //Data Store
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
 }

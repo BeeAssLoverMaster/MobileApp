@@ -25,7 +25,7 @@ fun AuthResponseDto.toAuthResponse(): AuthResponse {
 
 fun Login.toLoginDto(): LoginDto {
     return LoginDto(
-        username = username,
+//        username = username,
         email = email,
         password = password
     )
