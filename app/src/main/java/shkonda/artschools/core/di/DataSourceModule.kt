@@ -6,6 +6,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import shkonda.artschools.data.data_source.auth.AuthRemoteDataSource
 import shkonda.artschools.data.data_source.auth.AuthRemoteDataSourceImpl
+import shkonda.artschools.data.data_source.category.CategoriesRemoteDataSource
+import shkonda.artschools.data.data_source.category.CategoriesRemoteDataSourceImp
+import shkonda.artschools.data.data_source.genre.GenresRemoteDataSource
+import shkonda.artschools.data.data_source.genre.GenresRemoteDataSourceImpl
 import shkonda.artschools.data.data_source.user.UserRemoteDataSource
 import shkonda.artschools.data.data_source.user.UserRemoteDataSourceImpl
 import javax.inject.Singleton
@@ -21,4 +25,14 @@ abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindUserRemoteDataSource(userRemoteDataSourceImpl: UserRemoteDataSourceImpl): UserRemoteDataSource
+
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoriesRemoteDataSource(categoriesRemoteDataSourceImpl: CategoriesRemoteDataSourceImp): CategoriesRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindGenresRemoteDataSource(genresRemoteDataSourceImpl: GenresRemoteDataSourceImpl): GenresRemoteDataSource
+
 }

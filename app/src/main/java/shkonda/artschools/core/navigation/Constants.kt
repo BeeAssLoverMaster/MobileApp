@@ -8,6 +8,7 @@ object NavRoutes {
 //    const val edit_profile_screen = "${NavNames.edit_profile_screen}/{${EditProfileScreenArgs.USERNAME}}/{${EditProfileScreenArgs.USER_PROFILE_IMG}}"
     const val edit_profile_screen = "edit_profile_screen"
     const val update_profile_screen = "update_profile_screen"
+    const val genres_screen = "genres_screen"
 }
 
 object NavNames {

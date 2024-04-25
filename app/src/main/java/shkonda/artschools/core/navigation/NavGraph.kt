@@ -36,6 +36,7 @@ import shkonda.artschools.core.ui.components.CustomScaffold
 import shkonda.artschools.core.ui.theme.Black
 import shkonda.artschools.core.ui.theme.TransparentWhite
 import shkonda.artschools.presentation.edit_profile.EditProfileScreen
+import shkonda.artschools.presentation.genres.GenresScreen
 import shkonda.artschools.presentation.home.HomeScreen
 import shkonda.artschools.presentation.profile.ProfileScreen
 import shkonda.artschools.presentation.sign_in.SignInScreen
@@ -105,6 +106,19 @@ fun NavGraph(
             ) {
                 EditProfileScreen()
                 println("Info from composable: ${EditProfileScreenArgs.USERNAME}, ${EditProfileScreenArgs.USER_PROFILE_IMG}")
+            }
+            composable(
+                route = NavScreen.GenresScreen.route,
+                arguments = listOf(
+                    navArgument("categoryId") {type = NavType.StringType}
+                )
+            ) {
+                val categoryId = it.arguments?.getString("categoryId")
+                println("categoryID в NavGraph: $categoryId")
+                categoryId?.let {
+                    GenresScreen(categoryId = it)
+                }
+
             }
         }
 

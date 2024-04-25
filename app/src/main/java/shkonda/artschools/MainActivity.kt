@@ -41,8 +41,7 @@ class MainActivity : ComponentActivity() {
 //                    } else {
 //                        NavGraph(startDestination = NavScreen.HomeScreen.route,)
 //                    }
-                    NavGraph()
-//                    NavGraph(startDestination = NavScreen.SignInScreen.route)
+                    NavGraph(startDestination = NavScreen.SignInScreen.route)
                 }
             }
         }
