@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class AuthRemoteDataSourceImpl @Inject constructor(private val api: AuthApi) :
     AuthRemoteDataSource {
-    override suspend fun createUser(userDto: UserDto) = api.createUserAA(userDto = userDto)
+    override suspend fun createUser(userDto: UserDto) = api.createUser(userDto = userDto)
 
     override suspend fun signIn(loginDto: LoginDto): LoginResponseDto = api.signIn(loginDto = loginDto)
 }

@@ -35,13 +35,14 @@ import androidx.navigation.navArgument
 import shkonda.artschools.core.ui.components.CustomScaffold
 import shkonda.artschools.core.ui.theme.Black
 import shkonda.artschools.core.ui.theme.TransparentWhite
-import shkonda.artschools.presentation.edit_profile.EditProfileScreen
-import shkonda.artschools.presentation.genres.GenresScreen
-import shkonda.artschools.presentation.home.HomeScreen
-import shkonda.artschools.presentation.profile.ProfileScreen
-import shkonda.artschools.presentation.sign_in.SignInScreen
-import shkonda.artschools.presentation.sign_up.SignUpScreen
-import shkonda.artschools.presentation.update_profile.UpdateProfileScreen
+import shkonda.artschools.presentation.auth_page.sign_in.SignInScreen
+import shkonda.artschools.presentation.auth_page.sign_up.SignUpScreen
+import shkonda.artschools.presentation.main_page.art_genres.ArtGenresScreen
+import shkonda.artschools.presentation.main_page.home.HomeScreen
+import shkonda.artschools.presentation.main_page.quizzes.QuizzesScreen
+import shkonda.artschools.presentation.profile_page.edit_profile.EditProfileScreen
+import shkonda.artschools.presentation.profile_page.profile.ProfileScreen
+import shkonda.artschools.presentation.profile_page.update_profile.UpdateProfileScreen
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -108,15 +109,27 @@ fun NavGraph(
                 println("Info from composable: ${EditProfileScreenArgs.USERNAME}, ${EditProfileScreenArgs.USER_PROFILE_IMG}")
             }
             composable(
-                route = NavScreen.GenresScreen.route,
+                route = NavScreen.ArtGenresScreen.route,
                 arguments = listOf(
-                    navArgument("categoryId") {type = NavType.StringType}
+                    navArgument("typeId") {type = NavType.LongType}
                 )
             ) {
-                val categoryId = it.arguments?.getString("categoryId")
-                println("categoryID в NavGraph: $categoryId")
-                categoryId?.let {
-                    GenresScreen(categoryId = it)
+                val typeId = it.arguments?.getLong("typeId")
+                println("categoryID в NavGraph: $typeId")
+                typeId?.let {
+                    ArtGenresScreen(typeId = it)
+                }
+            }
+            composable(
+                route = NavScreen.QuizzesScreen.route,
+                arguments = listOf(
+                    navArgument("genreId") {type = NavType.LongType}
+                )
+            ) {
+                val genreId = it.arguments?.getLong("genreId")
+                println("categoryID в NavGraph: $genreId")
+                genreId?.let {
+                    QuizzesScreen(genreId = it)
                 }
 
             }

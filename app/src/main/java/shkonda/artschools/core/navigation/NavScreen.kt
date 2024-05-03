@@ -7,8 +7,10 @@ sealed class NavScreen(val route: String) {
     object ProfileScreen : NavScreen(route = NavRoutes.profile_screen)
     object EditProfileScreen : NavScreen(route = NavRoutes.edit_profile_screen)
     object UpdateProfileScreen : NavScreen(route = NavRoutes.update_profile_screen)
-//    object GenresScreen : NavScreen(route = NavRoutes.update_profile_screen)
-    object GenresScreen : NavScreen(route = "genres_screen/{categoryId}") {
-        fun createRoute(categoryId: String) = "genres_screen/$categoryId"
+    object ArtGenresScreen : NavScreen(route = "art_genres_screen/{typeId}") {
+        fun createArtGenresRoute(typeId: Long) = "art_genres_screen/$typeId"
+    }
+    object QuizzesScreen : NavScreen(route = "quizzes_screen/{genreId}") {
+        fun createQuizRoute(genreId: Long) = "quizzes_screen/$genreId"
     }
 }

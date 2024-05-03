@@ -15,3 +15,12 @@ fun SharedPreferences.Editor.removeToken() {
     remove("token")
     apply()
 }
+
+fun SharedPreferences.Editor.storeCategoryId(categoryId: Int) {
+    putInt("categoryId", categoryId)
+    apply()
+}
+
+fun SharedPreferences.getCategoryId(): Int {
+    return getInt("token", -1)
+}

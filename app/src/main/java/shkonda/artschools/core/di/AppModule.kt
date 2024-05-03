@@ -7,8 +7,10 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import shkonda.artschools.data.data_source.auth.api.AuthApi
-import shkonda.artschools.data.data_source.category.api.CategoryApi
-import shkonda.artschools.data.data_source.genre.api.GenreApi
+import shkonda.artschools.data.data_source.arts.category.api.ArtCategoryApi
+import shkonda.artschools.data.data_source.arts.genre.api.ArtGenresApi
+import shkonda.artschools.data.data_source.arts.type.api.ArtTypesApi
+import shkonda.artschools.data.data_source.quizzes.api.QuizApi
 import shkonda.artschools.data.data_source.user.api.UserApi
 import javax.inject.Singleton
 
@@ -39,21 +41,42 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCategoryApi(): CategoryApi {
+    fun provideArtCategoryApi(): ArtCategoryApi {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(CategoryApi::class.java)
+            .create(ArtCategoryApi::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideGenreApi(): GenreApi {
+    fun provideArtTypesApi(): ArtTypesApi {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(GenreApi::class.java)
+            .create(ArtTypesApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideArtGenresApi(): ArtGenresApi {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ArtGenresApi::class.java)
+    }
+
+    //quizzes
+    @Provides
+    @Singleton
+    fun provideQuizApi(): QuizApi {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(QuizApi::class.java)
     }
 }

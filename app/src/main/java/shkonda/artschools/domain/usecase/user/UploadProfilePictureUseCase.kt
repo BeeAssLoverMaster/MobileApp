@@ -18,6 +18,7 @@ class UploadProfilePictureUseCase @Inject constructor(private val repository: Us
         try {
             emit(Response.Loading)
 
+            println(filePart)
             emit(Response.Success(data = repository.uploadProfilePicture(token, filePart)))
         } catch (e: IOException) {
             emit(Response.Error(errorMessage = Messages.INTERNET))
@@ -29,10 +30,10 @@ class UploadProfilePictureUseCase @Inject constructor(private val repository: Us
             } else {
                 emit(Response.Error(errorMessage = Messages.UNKNOWN))
             }
-            Log.e("UploadProfilePictureUseCase.kt", e.stackTraceToString())
+            Log.e("UploadProfilePictureUseCase.kt", "HttpException:\n" + e.stackTraceToString())
         } catch (e: Exception) {
             emit(Response.Error(errorMessage = e.message ?: Messages.UNKNOWN))
-            Log.e("UploadProfilePictureUseCase.kt", e.stackTraceToString())
+            Log.e("UploadProfilePictureUseCase.kt", "Exception:\n" + e.stackTraceToString())
         }
     }
 }

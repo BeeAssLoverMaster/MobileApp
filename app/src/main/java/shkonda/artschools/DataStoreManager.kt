@@ -17,15 +17,18 @@ class DataStoreManager(val context: Context) {
 
     suspend fun saveUserData(userData: UserProfile) {
         context.dataStore.edit { pref ->
-            pref[stringPreferencesKey("username")] = userData.userName
-            pref[stringPreferencesKey("profilePicture")] = userData.profilePictureUrl
+            pref[stringPreferencesKey("username")] = userData.username
+            pref[stringPreferencesKey("profilePicture")] = userData.profileImage
         }
     }
 
     fun getUserData() = context.dataStore.data.map { pref ->
         return@map UserProfile(
             pref[stringPreferencesKey("username")] ?: "null",
-            pref[stringPreferencesKey("profilePicture")] ?: "null"
+            "",
+            pref[stringPreferencesKey("profilePicture")] ?: "null",
+            0,
+            0
         )
     }
 }

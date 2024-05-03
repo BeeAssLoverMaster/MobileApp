@@ -18,12 +18,11 @@ import shkonda.artschools.domain.model.user.UserProfile
 
 fun UserProfileDto.toUserProfile(): UserProfile {
     return UserProfile(
-        userName = userName,
-//        firstName = firstName,
-//        lastName = lastName,
-        profilePictureUrl = profilePictureUrl,
-//        score = score,
-//        biography = biography
+        username = username,
+        bio = bio,
+        profileImage = image,
+        artCategory = artCategory.toIntOrNull() ?: -1,
+        points = points.toIntOrNull() ?: -1
     )
 }
 

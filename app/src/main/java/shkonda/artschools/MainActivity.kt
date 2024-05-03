@@ -17,7 +17,7 @@ import shkonda.artschools.core.common.getToken
 import shkonda.artschools.core.navigation.NavGraph
 import shkonda.artschools.core.navigation.NavScreen
 import shkonda.artschools.core.ui.theme.ArtSchoolsTheme
-import shkonda.artschools.presentation.sign_in.SignInScreen
+import shkonda.artschools.presentation.auth_page.sign_in.SignInScreen
 import javax.inject.Inject
 
 @AndroidEntryPoint

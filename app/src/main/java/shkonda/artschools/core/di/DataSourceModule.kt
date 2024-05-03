@@ -4,12 +4,16 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import shkonda.artschools.data.data_source.arts.category.ArtCategoryRemoteDataSource
+import shkonda.artschools.data.data_source.arts.category.ArtCategoryRemoteDataSourceImp
+import shkonda.artschools.data.data_source.arts.genre.ArtGenresRemoteDataSource
+import shkonda.artschools.data.data_source.arts.genre.ArtGenresRemoteDataSourceImpl
+import shkonda.artschools.data.data_source.arts.type.ArtTypesRemoteDataSource
+import shkonda.artschools.data.data_source.arts.type.ArtTypesRemoteDataSourceImpl
 import shkonda.artschools.data.data_source.auth.AuthRemoteDataSource
 import shkonda.artschools.data.data_source.auth.AuthRemoteDataSourceImpl
-import shkonda.artschools.data.data_source.category.CategoriesRemoteDataSource
-import shkonda.artschools.data.data_source.category.CategoriesRemoteDataSourceImp
-import shkonda.artschools.data.data_source.genre.GenresRemoteDataSource
-import shkonda.artschools.data.data_source.genre.GenresRemoteDataSourceImpl
+import shkonda.artschools.data.data_source.quizzes.QuizRemoteDataSource
+import shkonda.artschools.data.data_source.quizzes.QuizRemoteDataSourceImpl
 import shkonda.artschools.data.data_source.user.UserRemoteDataSource
 import shkonda.artschools.data.data_source.user.UserRemoteDataSourceImpl
 import javax.inject.Singleton
@@ -26,13 +30,22 @@ abstract class DataSourceModule {
     @Singleton
     abstract fun bindUserRemoteDataSource(userRemoteDataSourceImpl: UserRemoteDataSourceImpl): UserRemoteDataSource
 
+    //arts
+    @Binds
+    @Singleton
+    abstract fun bindArtCategoryRemoteDataSource(artCategoryRemoteDataSourceImpl: ArtCategoryRemoteDataSourceImp): ArtCategoryRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindCategoriesRemoteDataSource(categoriesRemoteDataSourceImpl: CategoriesRemoteDataSourceImp): CategoriesRemoteDataSource
+    abstract fun bindArtTypesRemoteDataSource(artTypesRemoteDataSourceImpl: ArtTypesRemoteDataSourceImpl): ArtTypesRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindGenresRemoteDataSource(genresRemoteDataSourceImpl: GenresRemoteDataSourceImpl): GenresRemoteDataSource
+    abstract fun bindArtGenresRemoteDataSource(artGenresRemoteDataSourceImpl: ArtGenresRemoteDataSourceImpl): ArtGenresRemoteDataSource
+
+    //quizzes
+    @Binds
+    @Singleton
+    abstract fun bindQuizRemoteDataSource(quizRemoteDataSourceImpl: QuizRemoteDataSourceImpl): QuizRemoteDataSource
 
 }

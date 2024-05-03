@@ -31,7 +31,7 @@ interface UserApi {
      )
 
     @Multipart
-    @POST("image/profile_img")
+    @POST("api/users/add_img")
     suspend fun uploadProfilePicture(
         @Header("Authorization") token: String,
         @Part file: MultipartBody.Part
