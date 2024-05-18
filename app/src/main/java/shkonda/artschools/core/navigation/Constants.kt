@@ -5,9 +5,9 @@ object NavRoutes {
     const val profile_screen = "profile_screen"
     const val sign_in_screen = "sign_in_screen"
     const val sign_up_screen = "sign_up_screen"
-//    const val edit_profile_screen = "${NavNames.edit_profile_screen}/{${EditProfileScreenArgs.USERNAME}}/{${EditProfileScreenArgs.USER_PROFILE_IMG}}"
     const val edit_profile_screen = "edit_profile_screen"
     const val update_profile_screen = "update_profile_screen"
+    const val art_school_screen = "art_school_screen"
     const val genres_screen = "genres_screen"
 }
 
@@ -18,6 +18,7 @@ object NavNames {
 object BottomNavItems {
     val items = listOf(
         BottomNavItem.Home,
+        BottomNavItem.ArtSchool,
         BottomNavItem.Profile
     )
 }

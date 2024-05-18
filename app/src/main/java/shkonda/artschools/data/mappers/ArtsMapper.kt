@@ -1,8 +1,10 @@
 package shkonda.artschools.data.mappers
 
+import shkonda.artschools.data.data_source.arts.category.entity.ArtCategoriesDto
 import shkonda.artschools.data.data_source.arts.category.entity.ArtCategoryDto
 import shkonda.artschools.data.data_source.arts.genre.entity.ArtGenresDto
 import shkonda.artschools.data.data_source.arts.type.entity.ArtTypesDto
+import shkonda.artschools.domain.model.arts.ArtCategories
 import shkonda.artschools.domain.model.arts.ArtCategory
 import shkonda.artschools.domain.model.arts.ArtGenre
 import shkonda.artschools.domain.model.arts.ArtGenres
@@ -14,6 +16,18 @@ fun ArtCategoryDto.toArtCategory(): ArtCategory {
         id = this.id,
         categoryName = this.categoryName,
         imageUrl = this.categoryImageUrl
+    )
+}
+
+fun ArtCategoriesDto.toArtCategories(): ArtCategories {
+    return ArtCategories(
+        artCategories = this.artCategories.map { dto ->
+            ArtCategory(
+                id = dto.id,
+                categoryName = dto.categoryName,
+                imageUrl = dto.categoryImageUrl
+            )
+        }
     )
 }
 

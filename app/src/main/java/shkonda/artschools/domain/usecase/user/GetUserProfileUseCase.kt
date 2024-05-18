@@ -10,7 +10,7 @@ import shkonda.artschools.core.common.getErrorMessage
 import shkonda.artschools.core.navigation.NavScreen
 import shkonda.artschools.core.navigation.Navigator
 import shkonda.artschools.domain.model.user.UserProfile
-import shkonda.artschools.domain.repository.UserRepository
+import shkonda.artschools.data.repository.UserRepository
 import shkonda.artschools.domain.utils.Messages
 import java.io.IOException
 import javax.inject.Inject
@@ -24,6 +24,34 @@ class GetUserProfileUseCase @Inject constructor(
             emit(Response.Loading)
 
             emit(Response.Success(data = repository.getUserProfile(token)))
+        } catch (e: IOException) {
+            emit(Response.Error(errorMessage = Messages.INTERNET))
+            Log.e("GetUserProfileUseCase.kt", e.stackTraceToString())
+        } catch (e: HttpException) {
+            if (e.code() == 401) {
+                Navigator.navigate(NavScreen.SignInScreen.route) {
+                    popUpTo(0)
+                }
+            } else {
+                val errorMessage = e.getErrorMessage()
+                if (errorMessage != null) {
+                    emit(Response.Error(errorMessage = errorMessage))
+                } else {
+                    emit(Response.Error(errorMessage = Messages.UNKNOWN))
+                }
+                Log.e("GetUserProfileUseCase.kt", e.stackTraceToString())
+            }
+        } catch (e: Exception) {
+            emit(Response.Error(errorMessage = e.message ?: Messages.UNKNOWN))
+            Log.e("GetUserProfileUseCase.kt", e.stackTraceToString())
+        }
+    }
+
+    suspend operator fun invoke(token: String, artCategoryId: Long): Flow<Response<Unit>> = flow {
+        try {
+            emit(Response.Loading)
+
+            emit(Response.Success(data = repository.updateArtCategory(token, artCategoryId)))
         } catch (e: IOException) {
             emit(Response.Error(errorMessage = Messages.INTERNET))
             Log.e("GetUserProfileUseCase.kt", e.stackTraceToString())

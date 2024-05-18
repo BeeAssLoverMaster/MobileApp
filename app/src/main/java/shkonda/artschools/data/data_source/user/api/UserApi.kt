@@ -9,25 +9,33 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 import shkonda.artschools.data.data_source.user.entity.UpdateProfileBodyDto
 import shkonda.artschools.data.data_source.user.entity.UserProfileDto
+import shkonda.artschools.domain.model.arts.ArtCategory
 
 interface UserApi {
 
     @GET("api/users/get_profile")
     suspend fun getUserProfile(@Header("Authorization") token: String): UserProfileDto
-
-    /*  @PUT("api/Users/UpdatePassword")
-      suspend fun updatePassword(
-          @Header("Authorization") token: String,
-          @Body updatePasswordBodyDto: UpdatePasswordBodyDto
-      )*/
-
     @PUT("api/Users/UpdateProfile")
      suspend fun updateProfile(
          @Header("Authorization") token: String,
          @Body updateProfileBodyDto: UpdateProfileBodyDto
+     )
+
+     @PUT("api/users/add_points/{points}/{quizId}")
+     suspend fun addPointsToUser(
+         @Header("Authorization") token: String,
+         @Path("points") points: Int,
+         @Path("quizId") quizId: Long
+     )
+
+     @PUT("api/users/update_art_category/{artCategoryId}")
+     suspend fun updateArtCategory(
+         @Header("Authorization") token: String,
+         @Path("artCategoryId") artCategoryId: Long
      )
 
     @Multipart
@@ -41,7 +49,4 @@ interface UserApi {
     suspend fun deleteAccount(
         @Query("userId") userId: String
     )
-
-    /*@GET("api/Users/GetLeaderboard")
-    suspend fun getLeaderboard(): ArrayList<LeaderboardDto>*/
 }

@@ -6,19 +6,13 @@ import shkonda.artschools.data.mappers.toUpdateProfileBodyDto
 import shkonda.artschools.data.mappers.toUserProfile
 import shkonda.artschools.domain.model.user.UpdateProfileBody
 import shkonda.artschools.domain.model.user.UserProfile
-import shkonda.artschools.domain.repository.UserRepository
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(private val remoteDataSource: UserRemoteDataSource) : UserRepository {
+class UserRepositoryImpl @Inject constructor(private val remoteDataSource: UserRemoteDataSource) :
+    UserRepository {
 
     override suspend fun getUserProfile(token: String): UserProfile =
         remoteDataSource.getUserProfile(token).toUserProfile()
-
-    /* override suspend fun updatePassword(token: String, updatePasswordBody: UpdatePasswordBody) =
-         remoteDataSource.updatePassword(
-             token = token,
-             updatePasswordBodyDto = updatePasswordBody.toUpdatePasswordBodyDto()
-         )*/
 
     override suspend fun updateProfile(token: String, updateProfileBody: UpdateProfileBody) =
         remoteDataSource.updateProfile(
@@ -26,12 +20,15 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: UserR
             updateProfileBodyDto = updateProfileBody.toUpdateProfileBodyDto()
         )
 
+    override suspend fun addPoints(token: String, points: Int, quizId: Long) =
+        remoteDataSource.addPointsToUser(token, points, quizId)
+
+    override suspend fun updateArtCategory(token: String, artCategoryId: Long) =
+        remoteDataSource.updateArtCategory(
+            token = token,
+            artCategoryId = artCategoryId
+        )
+
     override suspend fun uploadProfilePicture(token: String, file: MultipartBody.Part) =
         remoteDataSource.uploadProfilePicture(token = token, file = file)
-
-    override suspend fun deleteAccount(userId: String) =
-        remoteDataSource.deleteAccount(userId = userId)
-
-    /*override suspend fun getLeaderboard(): ArrayList<Leaderboard> =
-        remoteDataSource.getLeaderboard().toLeaderboard()*/
 }

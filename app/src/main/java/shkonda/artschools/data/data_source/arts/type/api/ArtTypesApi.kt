@@ -7,5 +7,4 @@ import shkonda.artschools.data.data_source.arts.type.entity.ArtTypesDto
 interface ArtTypesApi {
     @GET("api/types/get")
     suspend fun getTypesByCategoryId(@Query("categoryId") categoryId: Long): ArtTypesDto
-
 }

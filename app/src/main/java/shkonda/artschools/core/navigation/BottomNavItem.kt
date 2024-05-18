@@ -15,6 +15,11 @@ sealed class BottomNavItem(val route: String, @DrawableRes val icon: Int) {
         R.drawable.ic_baseline_home
     )
 
+    object ArtSchool : BottomNavItem(
+        NavRoutes.art_school_screen,
+        R.drawable.ic_baseline_delete_forever
+    )
+
     object Profile : BottomNavItem(
         NavRoutes.profile_screen,
         R.drawable.ic_baseline_account_box

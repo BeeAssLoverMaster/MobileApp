@@ -8,7 +8,6 @@ import shkonda.artschools.data.mappers.toUserDto
 import shkonda.artschools.domain.model.auth.Login
 import shkonda.artschools.domain.model.auth.LoginResponse
 import shkonda.artschools.domain.model.auth.User
-import shkonda.artschools.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(private val remoteDataSource: AuthRemoteDataSource) :

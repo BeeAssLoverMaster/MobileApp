@@ -6,10 +6,8 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import shkonda.artschools.core.common.Response
 import shkonda.artschools.core.common.getErrorMessage
-import shkonda.artschools.domain.model.arts.ArtCategory
 import shkonda.artschools.domain.model.arts.ArtTypes
-import shkonda.artschools.domain.repository.arts.ArtCategoryRepository
-import shkonda.artschools.domain.repository.arts.ArtTypesRepository
+import shkonda.artschools.data.repository.art.ArtTypesRepository
 import shkonda.artschools.domain.utils.Messages
 import java.io.IOException
 import javax.inject.Inject
@@ -40,5 +38,4 @@ class GetArtTypesUseCase @Inject constructor(
             Log.e("GetArtTypesUseCase.kt", e.stackTraceToString())
         }
     }
-
 }

@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class LoginResponseDto(
     @SerializedName("token")
     val token: String
-//    val token: LoginResponseBodyDto
 )
 
 data class LoginResponseBodyDto(

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import shkonda.artschools.R
 import shkonda.artschools.core.common.loadImage
@@ -58,6 +59,7 @@ fun ArtGenresScreen(
 
     val artGenresState by viewModel.artGenresState.collectAsState()
 
+
     ArtGenresScreenContent(modifier, artGenresState)
 }
 
@@ -79,7 +81,8 @@ fun ArtGenresScreenContent(
             artGenresState = artGenresState,
             onGenreClick = {genreId ->
                 Navigator.navigate(NavScreen.QuizzesScreen.createQuizRoute(genreId))
-            })
+            }
+        )
     }
 }
 
@@ -89,6 +92,7 @@ fun ArtGenresSection(
     artGenresState: ArtGenresState,
     onGenreClick: (Long) -> Unit
 ) {
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -125,11 +129,6 @@ fun ArtGenresSection(
                             imageNameUrl = genre.imageNameUrl,
                             artGenre = genre
                         )
-//                        CategoryCard(
-//                            modifier = modifier,
-//                            onClick = {},
-//                            categoryName = it.categoryName
-//                        )
                     }
                 }
             }
@@ -152,7 +151,7 @@ fun ArtGenreCard(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable(onClick = {onGenreClick(artGenre.id)}),
+            .clickable(onClick = { onGenreClick(artGenre.id) }),
         shape = RoundedCornerShape(8)
     ) {
         AsyncImage(

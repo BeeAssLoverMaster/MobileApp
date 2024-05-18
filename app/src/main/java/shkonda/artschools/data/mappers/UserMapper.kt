@@ -21,7 +21,7 @@ fun UserProfileDto.toUserProfile(): UserProfile {
         username = username,
         bio = bio,
         profileImage = image,
-        artCategory = artCategory.toIntOrNull() ?: -1,
+        artCategory = artCategory,
         points = points.toIntOrNull() ?: -1
     )
 }

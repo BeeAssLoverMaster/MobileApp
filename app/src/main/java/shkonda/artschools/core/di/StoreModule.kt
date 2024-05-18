@@ -14,7 +14,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object StoreModule {
-
     @Provides
     @Singleton
     fun provideEncryptedSharedPreferences(@ApplicationContext context: Context) : SharedPreferences {

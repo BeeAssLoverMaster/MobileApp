@@ -8,17 +8,14 @@ import shkonda.artschools.core.common.Response
 import shkonda.artschools.core.common.getErrorMessage
 import shkonda.artschools.domain.model.auth.Login
 import shkonda.artschools.domain.model.auth.LoginResponse
-import shkonda.artschools.domain.repository.AuthRepository
+import shkonda.artschools.data.repository.AuthRepository
 import shkonda.artschools.domain.utils.Messages
 import java.io.IOException
 import javax.inject.Inject
 
 class SignInUseCase @Inject constructor(private val authRepository: AuthRepository) {
-
     suspend operator fun invoke(login: Login): Flow<Response<LoginResponse>> = flow {
-
         try {
-
             val response = authRepository.signIn(login = login)
             Log.d("SignInUseCase", "LoginResponse: $response")
             emit(Response.Loading)
@@ -39,7 +36,6 @@ class SignInUseCase @Inject constructor(private val authRepository: AuthReposito
             emit(Response.Error(errorMessage = e.message ?: Messages.UNKNOWN))
             Log.e("SignInUseCase.kt", e.stackTraceToString())
             Log.e("SignInUseCase.kt", "$login")
-
         }
     }
 }

@@ -7,13 +7,12 @@ import retrofit2.HttpException
 import shkonda.artschools.core.common.Response
 import shkonda.artschools.core.common.getErrorMessage
 import shkonda.artschools.domain.model.auth.User
-import shkonda.artschools.domain.repository.AuthRepository
+import shkonda.artschools.data.repository.AuthRepository
 import shkonda.artschools.domain.utils.Messages
 import java.io.IOException
 import javax.inject.Inject
 
 class CreateUserUseCase @Inject constructor(private val authRepository: AuthRepository) {
-
     suspend operator fun invoke(user: User): Flow<Response<String>> = flow {
         try {
             emit(Response.Loading)
@@ -40,5 +39,4 @@ class CreateUserUseCase @Inject constructor(private val authRepository: AuthRepo
             Log.e("CreateUserUseCase.kt", e.stackTraceToString())
         }
     }
-    // TODO: Переписать  выводы от сервера
 }

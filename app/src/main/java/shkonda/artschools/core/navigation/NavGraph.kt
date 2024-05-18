@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,11 +41,17 @@ import shkonda.artschools.core.ui.theme.TransparentWhite
 import shkonda.artschools.presentation.auth_page.sign_in.SignInScreen
 import shkonda.artschools.presentation.auth_page.sign_up.SignUpScreen
 import shkonda.artschools.presentation.main_page.art_genres.ArtGenresScreen
+import shkonda.artschools.presentation.main_page.article.ArticleScreen
+import shkonda.artschools.presentation.main_page.article.BioArticleScreen
 import shkonda.artschools.presentation.main_page.home.HomeScreen
+import shkonda.artschools.presentation.main_page.questions.QuestionScreen
 import shkonda.artschools.presentation.main_page.quizzes.QuizzesScreen
 import shkonda.artschools.presentation.profile_page.edit_profile.EditProfileScreen
 import shkonda.artschools.presentation.profile_page.profile.ProfileScreen
 import shkonda.artschools.presentation.profile_page.update_profile.UpdateProfileScreen
+import shkonda.artschools.presentation.school_page.ArtSchool
+import shkonda.artschools.presentation.school_page.ArtSchoolScreen
+import shkonda.artschools.presentation.school_page.ArtSchoolType
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -51,12 +60,15 @@ fun NavGraph(
     modifier: Modifier = Modifier,
     startDestination: String = NavScreen.SignInScreen.route
 ) {
-    //Может починить, в случае чего
     val navController = rememberNavController()
-//    val navController = rememberAnimatedNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val destination by Navigator.destination.collectAsState()
+
+    var tempType by remember { mutableStateOf(-1L)}
+    var tempGenre by remember { mutableStateOf(-1L)}
+    var tempQuiz by remember { mutableStateOf(-1L)}
+    var tempArticle by remember { mutableStateOf(-1L)}
 
     LaunchedEffect(destination) {
         if (destination.isBlank()) {
@@ -92,6 +104,19 @@ fun NavGraph(
             composable(NavScreen.HomeScreen.route) {
                 HomeScreen()
             }
+            composable(NavScreen.ArtSchoolScreen.route) {
+                ArtSchoolScreen(artSchools = listOf(
+                    ArtSchool(
+                    id = 0L,
+                    name = "Художественная школа имения Цивелёва Г.А.",
+                    description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
+                    location = "Комсомольск-на-Амуре, ул. Пушкина, дом Колотушкина",
+                    imageUrl = "books.png",
+                    type = ArtSchoolType.Music,
+                    programs = listOf("violin", "piano", "guitar")
+                )
+                ))
+            }
             composable(NavScreen.ProfileScreen.route) {
                 ProfileScreen()
             }
@@ -100,10 +125,6 @@ fun NavGraph(
             }
             composable(
                 route = NavScreen.EditProfileScreen.route,
-//                arguments = listOf(
-//                    navArgument(EditProfileScreenArgs.USERNAME) { type = NavType.StringType },
-//                    navArgument(EditProfileScreenArgs.USER_PROFILE_IMG) { type = NavType.StringType }
-//                )
             ) {
                 EditProfileScreen()
                 println("Info from composable: ${EditProfileScreenArgs.USERNAME}, ${EditProfileScreenArgs.USER_PROFILE_IMG}")
@@ -115,6 +136,9 @@ fun NavGraph(
                 )
             ) {
                 val typeId = it.arguments?.getLong("typeId")
+                if (typeId != null) {
+                    tempType = typeId
+                }
                 println("categoryID в NavGraph: $typeId")
                 typeId?.let {
                     ArtGenresScreen(typeId = it)
@@ -127,11 +151,49 @@ fun NavGraph(
                 )
             ) {
                 val genreId = it.arguments?.getLong("genreId")
-                println("categoryID в NavGraph: $genreId")
+                if (genreId != null) {
+                    tempGenre = genreId
+                }
                 genreId?.let {
-                    QuizzesScreen(genreId = it)
+                    QuizzesScreen(genreId = it, typeId = tempType)
                 }
 
+            }
+            composable(
+                route = NavScreen.ArticleScreen.route,
+                arguments = listOf(
+                    navArgument("quizId") {type = NavType.LongType}
+                )
+            ) {
+                val quizId = it.arguments?.getLong("quizId")
+                if ( quizId != null) {
+                    tempQuiz = quizId
+                }
+                quizId?.let {
+                    ArticleScreen(quizId = it, genreId = tempGenre)
+                }
+            }
+            composable(
+                route = NavScreen.BioArticleScreen.route,
+                arguments = listOf(
+                    navArgument("artistId") {type = NavType.LongType}
+                )
+            ) {
+                val artistId = it.arguments?.getLong("artistId")
+                artistId?.let {
+                    BioArticleScreen(artistId = it, quizId = tempQuiz)
+                }
+            }
+            composable(
+                route = NavScreen.QuestionScreen.route,
+                arguments = listOf(
+                    navArgument("quizId") {type = NavType.LongType}
+                )
+            ) {
+                val quizId = it.arguments?.getLong("quizId")
+                quizId?.let {
+                    QuestionScreen(quizId = quizId)
+                }
             }
         }
 
@@ -141,7 +203,6 @@ fun NavGraph(
             navController = navController,
         )
     })
-
 }
 
 @Composable
@@ -149,7 +210,6 @@ private fun BottomAppBar(
     modifier: Modifier,
     currentRoute: String?,
     navController: NavController
-//    showFab: Boolean
 ) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
         BottomNavItems.items.forEach { navItem ->
@@ -179,7 +239,7 @@ private fun BottomAppBar(
 @Composable
 private fun RowScope.BottomAppBarContent(currentRoute: String?, navController: NavController) {
     BottomNavItems.items.forEachIndexed { index, screen ->
-        if (index != 2) {
+        if (index != 3) {
             BottomNavigationItem(
                 selected = currentRoute == screen.route,
                 selectedContentColor = Black,

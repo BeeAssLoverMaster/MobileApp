@@ -29,6 +29,7 @@ val WhiteSmoke = Color(0xFFF5F5F5)
 
 val TextWhite = Color(0xDEFFFFFF)
 val Black = Color(0xFF000000)
+val LightGray = Color(0xFF636363)
 val DarkPink = Color(0xFFE84393)
 val StrangeGreen = Color(0xFF63D471)
 val Cream = Color(0xFFFFA69E)

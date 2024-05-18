@@ -7,7 +7,7 @@ import retrofit2.HttpException
 import shkonda.artschools.core.common.Response
 import shkonda.artschools.core.common.getErrorMessage
 import shkonda.artschools.domain.model.user.UpdateProfileBody
-import shkonda.artschools.domain.repository.UserRepository
+import shkonda.artschools.data.repository.UserRepository
 import shkonda.artschools.domain.utils.Messages
 import java.io.IOException
 import javax.inject.Inject

@@ -7,5 +7,4 @@ import javax.inject.Inject
 class ArtTypesRemoteDataSourceImpl @Inject constructor(private val api: ArtTypesApi) : ArtTypesRemoteDataSource {
     override suspend fun getArtTypesByArtCategoryId(categoryId: Long): ArtTypesDto =
         api.getTypesByCategoryId(categoryId)
-
 }

@@ -1,4 +1,3 @@
-
 package shkonda.artschools.presentation.main_page.home
 
 import android.app.Activity
@@ -10,12 +9,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,6 +24,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -31,6 +34,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,33 +59,41 @@ import shkonda.artschools.core.ui.OnBackPressed
 import shkonda.artschools.core.ui.components.CustomLoadingSpinner
 import shkonda.artschools.core.ui.theme.Grapefruit
 import shkonda.artschools.core.ui.theme.Sunset
+import shkonda.artschools.domain.model.arts.ArtCategory
 import shkonda.artschools.domain.model.arts.ArtType
 import shkonda.artschools.domain.model.user.UserProfile
+import shkonda.artschools.presentation.main_page.home.states.AllArtCategoriesState
 import shkonda.artschools.presentation.main_page.home.states.ArtCategoryState
 import shkonda.artschools.presentation.main_page.home.states.ArtTypesState
 import shkonda.artschools.presentation.main_page.home.states.UserState
+import shkonda.artschools.presentation.main_page.home.states.getArtCategoryListState
+import shkonda.artschools.presentation.main_page.home.states.getArtCategoryState
+import shkonda.artschools.presentation.main_page.home.states.getArtTypeListState
+import shkonda.artschools.presentation.main_page.home.states.getUserProfileState
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val userState by viewModel.userState.collectAsState()
-    val artCategoryState by viewModel.artCategoryState.collectAsState()
-    val artTypesState by viewModel.artTypesState.collectAsState()
+    val user = getUserProfileState(viewModel)
+    val artCategory = getArtCategoryState(viewModel)
+    val artCategoryList = getArtCategoryListState(viewModel)
+    val artTypeList = getArtTypeListState(viewModel)
 
     val activity = LocalContext.current as Activity
     OnBackPressed(activity = activity)
 
-    HomeScreenContent(modifier, userState, artCategoryState, artTypesState, viewModel)
+    HomeScreenContent(modifier, user, artCategory, artCategoryList, artTypeList, viewModel)
 }
 
 @Composable
 fun HomeScreenContent(
     modifier: Modifier,
-    userState: UserState,
-    artCategoryState: ArtCategoryState,
-    artTypesState: ArtTypesState,
+    user: UserProfile?,
+    artCategory: ArtCategory?,
+    artCategoryList: List<ArtCategory>,
+    artTypeList: List<ArtType>,
     viewModel: HomeViewModel
 ) {
     Column(
@@ -94,86 +108,52 @@ fun HomeScreenContent(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSection(modifier = modifier, userState = userState, artCategoryState = artCategoryState)
+            TopBarSection(
+                modifier = modifier,
+                user = user,
+                artCategory = artCategory,
+                artCategoryList = artCategoryList,
+                viewModel = viewModel
+            )
         }
         ArtTypesSection(
             modifier = modifier,
-            artTypesState = artTypesState,
-            onCategoryClick = {typeId ->
-//                viewModel.onCategorySelected(categoryId)
+            artTypeList = artTypeList,
+            onCategoryClick = { typeId ->
                 Navigator.navigate(NavScreen.ArtGenresScreen.createArtGenresRoute(typeId))
             }
         )
     }
 }
-val fakeUserProfile = UserProfile("", "", "", 1, 0)
-val fakeUserState = UserState.Success(fakeUserProfile)
-//@Preview(showBackground = true, widthDp = 360)
-//@Composable
-//private fun TopBarPrev() {
-//    TopBarSection(
-//        modifier = Modifier,
-//        userState = fakeUserState
-//    )
-//}
-
 @Composable
 fun TopBarSection(
     modifier: Modifier,
-    userState: UserState,
-    artCategoryState: ArtCategoryState
+    user: UserProfile?,
+    artCategory: ArtCategory?,
+    artCategoryList: List<ArtCategory>,
+    viewModel: HomeViewModel
 ) {
     Row(
-        modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
-        when (userState) {
-            is UserState.Nothing -> {}
-            is UserState.Loading -> {
-                Box(
-                    modifier
-                        .fillMaxWidth()
-                        .align(Alignment.CenterVertically)
-                ) {
-                    CustomLoadingSpinner()
-                }
-            }
-            is UserState.Success -> {
-                ProfileImage(
-                    modifier = modifier,
-                    userProfileImage = userState.data.profileImage
-                )
-                UserNameLevel(
-                    modifier = modifier,
-//                    username = userState.data.username
-                    username = userState.data.username
-                )
-                CategoryImage(
-                    modifier = modifier,
-                    artCategoryState
-                )
-                //Notifications
-            }
+        Spacer(modifier = Modifier.padding(start = 16.dp))
 
-            is UserState.Error -> {
-                TopBarError(
-                    modifier = modifier,
-                    errorMessage = userState.errorMessage
-                )
-            }
+        CategoryImage(
+            modifier = modifier,
+            artCategory = artCategory,
+            artCategoryList = artCategoryList,
+            viewModel = viewModel
+        )
+        if (user != null) UserNameLevel(modifier = modifier, username = user.username)
 
-            else -> {}
-        }
+        if (user != null) ProfilePoints(modifier = modifier, points = user.points)
     }
 }
 
 @Composable
-private fun ProfileImage(
-    modifier: Modifier,
-    userProfileImage: String
-) {
+private fun ProfileImage(modifier: Modifier, userProfileImage: String) {
     AsyncImage(
         modifier = modifier
             .size(72.dp)
@@ -202,16 +182,22 @@ private fun UserNameLevel(modifier: Modifier, username: String) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Hello, $username",
+            text = username,
             style = MaterialTheme.typography.body2.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primaryVariant
-            )
+            ),
+            fontSize = 32.sp
         )
+    }
+}
+
+@Composable
+fun ProfilePoints(modifier: Modifier, points: Int) {
+    Column() {
         Text(
-            text = "Lv. 1  Beginner",
-            style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.primaryVariant
+            text = "$points",
+            fontSize = 24.sp
         )
     }
 }
@@ -240,29 +226,10 @@ private fun TopBarError(modifier: Modifier, errorMessage: String) {
     }
 }
 
-//val fakeCategoriesList = listOf(
-//    Category("1", "Test1", ""),
-//    Category("2", "Test2", ""),
-//    Category("3", "Test3", ""),
-//    Category("4", "Test4", " "),
-//)
-//val fakeCategories = Categories(categories = ArrayList(fakeCategoriesList))
-//val fakeState = CategoriesState.Success(fakeCategories)
-
-//@Preview(showBackground = true, widthDp = 360)
-//@Composable
-//private fun QuizPrev() {
-//    ArtTypesSection(
-//        modifier = Modifier,
-//        artTypesState = fakeState,
-//        onCategoryClick = {}
-//    )
-//}
-
 @Composable
 fun ArtTypesSection(
     modifier: Modifier,
-    artTypesState: ArtTypesState,
+    artTypeList: List<ArtType>,
     onCategoryClick: (Long) -> Unit
 ) {
     Column(
@@ -278,36 +245,21 @@ fun ArtTypesSection(
             ),
             modifier = modifier.padding(bottom = 16.dp)
         )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(artTypeList) { type ->
+                TypeCard(
+                    modifier = modifier,
+                    typeTitle = type.typeName,
+                    typeImageUrl = type.imageName,
+                    onCategoryClick = onCategoryClick,
+                    artType = type
+                )
 
-        when (artTypesState) {
-            is ArtTypesState.Loading -> {
-                Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CustomLoadingSpinner()
-                }
             }
-            is ArtTypesState.Success -> {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(artTypesState.typesData.types) { type ->
-                        TypeCard(
-                            modifier = modifier,
-                            typeTitle = type.typeName,
-                            typeImageUrl = type.imageName,
-                            onCategoryClick = onCategoryClick,
-                            artType = type
-                        )
-
-                    }
-                }
-            }
-            is ArtTypesState.Error -> {
-                CategoriesError(modifier = modifier, errorMessage = artTypesState.errorMessage)
-            }
-
-            else -> {}
         }
     }
 }
@@ -399,38 +351,75 @@ private fun CategoryCardButton(modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-private fun CategoryImage(
-    modifier: Modifier,
-    categoryState: ArtCategoryState
-) {
-    when (categoryState) {
-        is ArtCategoryState.Loading -> {
-            Box(
-                modifier
-                    .fillMaxWidth()
-            ) {
-                CustomLoadingSpinner()
-            }
-        }
+private fun CategoryImage(modifier: Modifier, artCategory: ArtCategory?, artCategoryList: List<ArtCategory>, viewModel: HomeViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
 
-        is ArtCategoryState.Success -> {
-            Box(contentAlignment = Alignment.Center) {
+    Column(
+        modifier = modifier.padding()
+    ) {
+        IconButton(onClick = { showDialog = true }) {
+            if (artCategory != null) {
                 AsyncImage(
                     modifier = modifier
                         .size(72.dp),
-//                model = loadImage(context = LocalContext.current, imageUrl = categoryImage),
-                    model = loadImage(context = LocalContext.current, imageUrl = categoryState.categoryData.imageUrl),
+                    model = loadImage(
+                        context = LocalContext.current,
+                        imageUrl = artCategory.imageUrl
+                    ),
                     contentDescription = "Изображение категорий",
                     contentScale = ContentScale.Crop
                 )
             }
         }
 
-        is ArtCategoryState.Error -> {
-            Text(text = "Ошибка загрузки")
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text(text = "Смените искусство!") },
+                text = { Text("Выберите что вы хотите изучать сегодня!") },
+                buttons = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        artCategoryList.forEach { artCategory ->
+                            ImageTextButton(
+                                text = artCategory.categoryName,
+                                iconUrl = artCategory.imageUrl,
+                                onClick = {
+                                    viewModel.updateUserArtCategory(artCategory.id)
+                                    showDialog = false
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+                }
+            )
         }
     }
+}
 
+
+@Composable
+fun ImageTextButton(text: String, iconUrl: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = iconUrl,
+                contentDescription = "Иконка",
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp)) // Добавляет пространство между иконкой и текстом
+            Text(text)
+        }
+    }
 }
 
 @Composable
