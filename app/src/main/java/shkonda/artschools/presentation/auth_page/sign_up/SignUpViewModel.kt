@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import shkonda.artschools.core.common.EmailController
 import shkonda.artschools.core.common.Response
+import shkonda.artschools.core.navigation.NavScreen
+import shkonda.artschools.core.navigation.Navigator
 import shkonda.artschools.domain.model.auth.User
 import shkonda.artschools.domain.usecase.auth.CreateUserUseCase
 import shkonda.artschools.presentation.utils.Messages
@@ -158,6 +160,10 @@ class SignUpViewModel @Inject constructor(
             true
         }
 
+    fun navigateSignInScreen() {
+        Navigator.navigate(NavScreen.SignInScreen.route) {}
+    }
+}
     /*private fun confirmUserPassword(): Boolean =
     if (userPassword == userConfirmPassword) {
         userPasswordError = false
@@ -172,4 +178,3 @@ class SignUpViewModel @Inject constructor(
 
         false
     }*/
-}

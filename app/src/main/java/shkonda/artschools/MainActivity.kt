@@ -7,43 +7,53 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import shkonda.artschools.core.common.getToken
 import shkonda.artschools.core.navigation.NavGraph
 import shkonda.artschools.core.navigation.NavScreen
 import shkonda.artschools.core.ui.theme.ArtSchoolsTheme
-import shkonda.artschools.presentation.auth_page.sign_in.SignInScreen
 import javax.inject.Inject
 
+/* Аннотация @AndroidEntryPoint указывает на то,
+   что данный класс будет точкой входа для Dagger Hilt.
+   Это позволяет осуществлять внедрение зависимостей
+*/
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    // Внедрение зависимости SharedPreferences, которое будет инициализировано Dagger Hilt
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
+    // Метод, вызываемый при создании активности
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Устанавливаем содержимое экрана с помощью функции setContent
         setContent {
+            // Применяем тему ArtSchoolsTheme к содержимому
             ArtSchoolsTheme {
-                // A surface container using the 'background' color from the theme
+                // Создаем поверхность (Surface), которая занимает весь экран
+                // и использует фоновый цвет темы.
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    if (sharedPreferences.getToken().isNullOrEmpty()) {
-//                        NavGraph()
-//                    } else {
-//                        NavGraph(startDestination = NavScreen.HomeScreen.route,)
-//                    }
-                    NavGraph(startDestination = NavScreen.SignInScreen.route)
+                    // Проверяем, есть ли сохраненный токен в SharedPreferences
+                    // Если токен отсутствует или пуст, отображаем начальный граф навигации
+                    if (sharedPreferences.getToken().isNullOrEmpty()) {
+                        NavGraph()
+                    } else {
+                        // Если токен существует, устанавливаем начальной точкой графа экран HomeScreen
+                        NavGraph(startDestination = NavScreen.HomeScreen.route)
+                    }
                 }
             }
         }
     }
 }
+
+
+
+

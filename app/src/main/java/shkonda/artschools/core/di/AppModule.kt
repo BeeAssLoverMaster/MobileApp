@@ -17,8 +17,8 @@ import shkonda.artschools.data.data_source.quizzes.api.QuizApi
 import shkonda.artschools.data.data_source.user.api.UserApi
 import javax.inject.Singleton
 
-const val BASE_URL = "http://10.0.2.2:8080"
-
+//const val BASE_URL = "http://10.0.2.2:8080"
+const val BASE_URL = "http://192.168.1.6:8080"
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -31,7 +31,6 @@ object AppModule {
             .build()
             .create(AuthApi::class.java)
     }
-
     @Provides
     @Singleton
     fun provideUserApi(): UserApi {

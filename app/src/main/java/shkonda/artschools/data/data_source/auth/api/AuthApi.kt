@@ -8,9 +8,9 @@ import shkonda.artschools.data.data_source.auth.entity.LoginResponseDto
 import shkonda.artschools.data.data_source.auth.entity.UserDto
 
 interface AuthApi {
-    @POST("/api/sign-up")
+    @POST("/auth/sign-up")
     suspend fun createUser(@Body userDto: UserDto): AuthResponseDto
 
-    @POST("/api/sign-in")
+    @POST("/auth/sign-in")
     suspend fun signIn(@Body loginDto: LoginDto): LoginResponseDto
 }

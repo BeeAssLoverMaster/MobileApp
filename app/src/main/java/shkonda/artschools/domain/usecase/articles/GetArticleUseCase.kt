@@ -21,7 +21,7 @@ class GetArticleUseCase @Inject constructor(
             emit(Response.Success(data = articleRepository.getAllArticleByGenreId(genreId)))
         } catch (e: IOException) {
             emit(Response.Error(errorMessage = Messages.INTERNET))
-            Log.e("GetQuizUseCase.kt", e.stackTraceToString())
+            Log.e("GetArticleUseCase.kt", e.stackTraceToString())
         } catch (e: HttpException) {
             val errorMessage = e.getErrorMessage()
             if (errorMessage != null) {
@@ -29,10 +29,10 @@ class GetArticleUseCase @Inject constructor(
             } else {
                 emit(Response.Error(errorMessage = Messages.UNKNOWN))
             }
-            Log.e("GetQuizUseCase.kt", e.stackTraceToString())
+            Log.e("GetArticleUseCase.kt", e.stackTraceToString())
         } catch (e: Exception) {
             emit(Response.Error(errorMessage = e.message ?: Messages.UNKNOWN))
-            Log.e("GetQuizUseCase.kt", e.stackTraceToString())
+            Log.e("GetArticleUseCase.kt", e.stackTraceToString())
         }
     }
 }

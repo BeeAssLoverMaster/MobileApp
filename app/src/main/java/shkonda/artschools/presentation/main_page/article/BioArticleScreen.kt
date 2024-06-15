@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,14 +32,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,8 +80,36 @@ fun BioArticleScreen(
 
     val quizArticle = getQuizArticleState(viewModel)
     val bioArticle = getBioArticleState(viewModel)
+    val scrollState = rememberScrollState()
 
-    BioArticleScreenContent(modifier = modifier, bioArticle)
+    Surface(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize().blur(16.dp),
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.8f))
+            )
+            Box(modifier = modifier.fillMaxSize()) {
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(bottom = 60.dp)
+                        .verticalScroll(scrollState)
+                ) {
+                    BioArticleScreenContent(modifier = modifier.padding(horizontal = 16.dp), bioArticle)
+//                    Spacer(modifier = modifier.height(32.dp))
+                }
+            }
+        }
+
+    }
+
 }
 
 
@@ -83,49 +118,64 @@ fun BioArticleScreenContent(
     modifier: Modifier,
     bioArticle: ArtistArticle?
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val textSize = (screenWidth / 16).value.sp
+    val imageSize = (screenWidth / 3) - 16.dp
     if (bioArticle != null) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
         ) {
+            Spacer(modifier = Modifier.height(32.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = bioArticle.artistName,
-                    fontSize = 24.sp,
-                    modifier = Modifier.weight(2f)
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontSize = textSize
+                    ),
+                    modifier = Modifier
+                        .padding(end = 16.dp) // Добавляем отступ справа от текста
+                        .weight(1f)
                 )
                 AsyncImage(
                     model = loadImage(context = LocalContext.current, imageUrl = bioArticle.artistImage),
                     contentDescription = "Изображение в статье",
                     contentScale = ContentScale.Crop,
                     modifier = modifier
-                        .size(125.dp)
+                        .size(imageSize)
                         .clip(CircleShape)
                         .border(
-                            border = BorderStroke(
-                                width = 2.dp,
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Sunset,
-                                        Grapefruit
-                                    )
-                                )
+                            width = 2.dp,
+                            brush = Brush.linearGradient(
+                                colors = listOf(Color(0xFF8372DB), Color(0xFF79B27D)),
+                                start = Offset(0f, 0f), // Top-center
+                                end = Offset(0f, Float.POSITIVE_INFINITY)
                             ),
                             shape = CircleShape
                         )
                 )
             }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = bioArticle.text,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            val paragraphs = bioArticle.text.split("\\n")
+            paragraphs.forEach { paragraph ->
+                Text(
+                    text = paragraph,
+                    style = TextStyle(
+                        fontSize = textSize,
+                        color = Color.White,
+                        textIndent = TextIndent(firstLine = 60.sp),
+                        hyphens = Hyphens.Auto
+                    ),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
 
             Spacer(modifier = modifier.height(16.dp))
 
@@ -140,40 +190,42 @@ fun BioImageGallery(modifier: Modifier = Modifier, bioArticleImageList: List<Bio
     var showDialog by remember { mutableStateOf(false) }
     var selectedImage by remember { mutableStateOf<BioArticleImage?>(null) }
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val imageSize = (screenWidth / 2)
+
     if (showDialog && selectedImage != null) {
         BioImageDialog(modifier = modifier, image = selectedImage) {
             showDialog = false
         }
     }
 
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         items(bioArticleImageList) { index ->
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                modifier = modifier.padding(vertical = 8.dp)
-            ) {
-                AsyncImage(
-                    modifier = modifier
-                        .size(125.dp)
-                        .border(
-                            border = BorderStroke(
-                                width = 2.dp, brush = Brush.horizontalGradient(
-                                    colors = listOf(Sunset, Grapefruit)
-                                )
-                            ),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .clickable {
-                            selectedImage = index
-                            showDialog = true
-                        },
-                    model = loadImage(context = LocalContext.current, imageUrl = index.imageName),
-                    contentDescription = index.imageDescription,
-                    contentScale = ContentScale.Crop
-                )
-            }
+            AsyncImage(
+                modifier = modifier
+                    .size(imageSize)
+                    .clip(RoundedCornerShape(4.dp))
+                    .border(
+                        width = 2.dp,
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color(0xFF8372DB), Color(0xFF79B27D)),
+                            start = Offset(0f, 0f), // Top-center
+                            end = Offset(0f, Float.POSITIVE_INFINITY)
+                        ),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .clickable {
+                        selectedImage = index
+                        showDialog = true
+                    },
+                model = loadImage(context = LocalContext.current, imageUrl = index.imageName),
+                contentDescription = index.imageDescription,
+                contentScale = ContentScale.Crop
+            )
         }
     }
+
 }
 
 @Composable

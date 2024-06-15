@@ -44,3 +44,6 @@ val BlackSmoke = Color(0xFF1E1E1E)
 
 val SuccessGreen = Color(0xFF4BB543)
 val FailRed = Color(0xFFCC0000)
+
+val CustomBlue = Color(0xFF378396)
+val CustomBrown = Color(0xFF674B4B)

@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 object Messages {
     const val UNKNOWN = "Что-то пошло не так. Пожалуйста, попробуйте позже"
     const val INTERNET = "Пожалуйста, проверьте ваше интернет соединение"
+    const val HTTP = "Проблема с отправкой запроса на сервер"
     const val USER_CRE_SUC = "Пользователь успешно создан"
 }
 

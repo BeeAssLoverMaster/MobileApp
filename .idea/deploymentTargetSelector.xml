@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Start">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-05-14T01:15:00.498241Z">
+        <DropdownSelection timestamp="2024-05-23T13:54:23.421707200Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\shkon\.android\avd\Pixel_7_Pro_API_34.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=2b4e2cc" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -17,6 +17,17 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="ArtScoolScreenPrev">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2024-05-24T03:00:24.863984200Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\shkon\.android\avd\New_Device_API_34.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="SignInPrev - Small Phone Preview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -9,8 +9,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -24,9 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -35,10 +38,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import shkonda.artschools.R
 import shkonda.artschools.core.ui.components.CustomScaffold
-import shkonda.artschools.core.ui.theme.Black
-import shkonda.artschools.core.ui.theme.TransparentWhite
-import shkonda.artschools.presentation.auth_page.sign_in.SignInScreen
+import shkonda.artschools.presentation.auth_page.sign_in.states.SignInScreen
 import shkonda.artschools.presentation.auth_page.sign_up.SignUpScreen
 import shkonda.artschools.presentation.main_page.art_genres.ArtGenresScreen
 import shkonda.artschools.presentation.main_page.article.ArticleScreen
@@ -65,10 +67,10 @@ fun NavGraph(
     val currentRoute = navBackStackEntry?.destination?.route
     val destination by Navigator.destination.collectAsState()
 
-    var tempType by remember { mutableStateOf(-1L)}
-    var tempGenre by remember { mutableStateOf(-1L)}
-    var tempQuiz by remember { mutableStateOf(-1L)}
-    var tempArticle by remember { mutableStateOf(-1L)}
+    var tempType by remember { mutableStateOf(-1L) }
+    var tempGenre by remember { mutableStateOf(-1L) }
+    var tempQuiz by remember { mutableStateOf(-1L) }
+    var tempArticle by remember { mutableStateOf(-1L) }
 
     LaunchedEffect(destination) {
         if (destination.isBlank()) {
@@ -94,7 +96,7 @@ fun NavGraph(
                     animationSpec = tween(700)
                 )
             }
-        ){
+        ) {
             composable(NavScreen.SignInScreen.route) {
                 SignInScreen()
             }
@@ -105,17 +107,46 @@ fun NavGraph(
                 HomeScreen()
             }
             composable(NavScreen.ArtSchoolScreen.route) {
-                ArtSchoolScreen(artSchools = listOf(
-                    ArtSchool(
-                    id = 0L,
-                    name = "Художественная школа имения Цивелёва Г.А.",
-                    description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
-                    location = "Комсомольск-на-Амуре, ул. Пушкина, дом Колотушкина",
-                    imageUrl = "books.png",
-                    type = ArtSchoolType.Music,
-                    programs = listOf("violin", "piano", "guitar")
+                ArtSchoolScreen(
+                    artSchools = listOf(
+                        ArtSchool(
+                            id = 0L,
+                            name = "Художественная школа имени Цивелёва Г.А.",
+                            description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
+                            location = "Комсомольск-на-Амуре, ул. Пушкина, дом Колотушкина",
+                            imageUrl = R.drawable.first_school,
+                            type = ArtSchoolType.Music,
+                            programs = listOf("violin", "piano", "guitar")
+                        ),
+                        ArtSchool(
+                            id = 1L,
+                            name = "Детская музыкальная школа",
+                            description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
+                            location = "Комсомольск-на-Амуре, Проспект Первостроителей, 41",
+                            imageUrl = R.drawable.second_school,
+                            type = ArtSchoolType.Music,
+                            programs = listOf("violin", "piano", "guitar")
+                        ),
+                        ArtSchool(
+                            id = 2L,
+                            name = "Детская школа искусств №6",
+                            description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
+                            location = "г. Хабаровск, ул. Ленинградская,30",
+                            imageUrl = R.drawable.third_school,
+                            type = ArtSchoolType.Music,
+                            programs = listOf("Фортепиано", "Народные инструменты", "Вокал")
+                        ),
+                        ArtSchool(
+                            id = 3L,
+                            name = "Детская школа искусств №7",
+                            description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
+                            location = "г. Хабаровск, Переулок Пилотов, 1",
+                            imageUrl = R.drawable.fourth_school,
+                            type = ArtSchoolType.Music,
+                            programs = listOf("violin", "piano", "guitar")
+                        )
+                    ),
                 )
-                ))
             }
             composable(NavScreen.ProfileScreen.route) {
                 ProfileScreen()
@@ -132,7 +163,7 @@ fun NavGraph(
             composable(
                 route = NavScreen.ArtGenresScreen.route,
                 arguments = listOf(
-                    navArgument("typeId") {type = NavType.LongType}
+                    navArgument("typeId") { type = NavType.LongType }
                 )
             ) {
                 val typeId = it.arguments?.getLong("typeId")
@@ -147,7 +178,7 @@ fun NavGraph(
             composable(
                 route = NavScreen.QuizzesScreen.route,
                 arguments = listOf(
-                    navArgument("genreId") {type = NavType.LongType}
+                    navArgument("genreId") { type = NavType.LongType }
                 )
             ) {
                 val genreId = it.arguments?.getLong("genreId")
@@ -162,11 +193,11 @@ fun NavGraph(
             composable(
                 route = NavScreen.ArticleScreen.route,
                 arguments = listOf(
-                    navArgument("quizId") {type = NavType.LongType}
+                    navArgument("quizId") { type = NavType.LongType }
                 )
             ) {
                 val quizId = it.arguments?.getLong("quizId")
-                if ( quizId != null) {
+                if (quizId != null) {
                     tempQuiz = quizId
                 }
                 quizId?.let {
@@ -176,7 +207,7 @@ fun NavGraph(
             composable(
                 route = NavScreen.BioArticleScreen.route,
                 arguments = listOf(
-                    navArgument("artistId") {type = NavType.LongType}
+                    navArgument("artistId") { type = NavType.LongType }
                 )
             ) {
                 val artistId = it.arguments?.getLong("artistId")
@@ -187,7 +218,7 @@ fun NavGraph(
             composable(
                 route = NavScreen.QuestionScreen.route,
                 arguments = listOf(
-                    navArgument("quizId") {type = NavType.LongType}
+                    navArgument("quizId") { type = NavType.LongType }
                 )
             ) {
                 val quizId = it.arguments?.getLong("quizId")
@@ -196,7 +227,6 @@ fun NavGraph(
                 }
             }
         }
-
         BottomAppBar(
             modifier = modifier,
             currentRoute = currentRoute,
@@ -205,6 +235,7 @@ fun NavGraph(
     })
 }
 
+/*
 @Composable
 private fun BottomAppBar(
     modifier: Modifier,
@@ -274,6 +305,116 @@ private fun RowScope.BottomAppBarContent(currentRoute: String?, navController: N
                 onClick = {},
                 enabled = false,
                 label = {},
+                icon = {}
+            )
+        }
+    }
+}*/
+
+@Composable
+private fun BottomAppBar(
+    modifier: Modifier,
+    currentRoute: String?,
+    navController: NavController
+) {
+    // Use a Box to align the content at the bottom center
+    Box(modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        BottomNavItems.items.forEach { bottomNavItem ->
+            if (bottomNavItem.route == currentRoute) {
+                androidx.compose.material.BottomAppBar(
+                    modifier = modifier
+                        .padding(horizontal = 16.dp)
+//                .navigationBarsPadding()
+                        .clip(
+                            shape = RoundedCornerShape(
+                                topStart = 20.dp,
+                                topEnd = 20.dp,
+                                bottomEnd = 0.dp,
+                                bottomStart = 0.dp
+                            )
+                        ) // Rounded corners for the bar
+                        .border(
+                            border = BorderStroke(
+                                width = 2.dp,
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xFF7885F3).copy(alpha = 0.6f),
+                                        Color.Transparent
+                                    ),
+                                    startY = 0f,
+                                    endY = Float.POSITIVE_INFINITY
+                                )
+                            ),
+                            shape = RoundedCornerShape(
+                                topStart = 20.dp,
+                                topEnd = 20.dp,
+                                bottomEnd = 0.dp,
+                                bottomStart = 0.dp
+                            )
+                        ),
+                    backgroundColor = Color(0xFF1E2245).copy(alpha = 0.1f), // Custom background color
+                    elevation = 0.dp
+                ) {
+                    BottomAppBarContent(
+                        currentRoute = currentRoute,
+                        navController = navController
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowScope.BottomAppBarContent(currentRoute: String?, navController: NavController) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val textSize = (screenWidth / 16).value.sp
+    val imageSize = (screenWidth / 6) - 16.dp
+
+    BottomNavItems.items.forEachIndexed { index, screen ->
+        // Filter to show only valid icons
+        if (index < 3) {
+            BottomNavigationItem(
+                selected = currentRoute == screen.route,
+                selectedContentColor = Color(0xFFB9B5FF), // Selected icon color
+                unselectedContentColor = Color(0xFFB9B5FF).copy(alpha = 0.6f), // Unselected icon color
+                onClick = {
+                    if (currentRoute != screen.route) {
+                        navController.navigate(screen.route) {
+                            navController.graph.findStartDestination().id.let {
+                                popUpTo(it) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    }
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = screen.icon),
+                        modifier = Modifier.size(imageSize),
+                        contentDescription = null,
+                        tint = Color(0xFFB9B5FF)
+                    )
+                    /*Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, Color(0xFFB9B5FF), CircleShape)
+                    ) {
+
+                    }*/
+                }
+            )
+        } else {
+            BottomNavigationItem(
+                selected = false,
+                onClick = {},
+                enabled = false,
                 icon = {}
             )
         }
