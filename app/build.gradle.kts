@@ -131,4 +131,6 @@ dependencies {
 
     implementation("org.osmdroid:osmdroid-android:6.1.10")
 
+    //swipeToRefresh
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.26.3-beta")
 }

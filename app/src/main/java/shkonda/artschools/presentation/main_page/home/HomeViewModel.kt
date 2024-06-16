@@ -61,6 +61,7 @@ class HomeViewModel @Inject constructor(
 
     private fun getToken() {
         token = sharedPreferences.getToken()
+        println("token: $token")
     }
 
     private fun getUserProfile() = viewModelScope.launch(Dispatchers.IO) {

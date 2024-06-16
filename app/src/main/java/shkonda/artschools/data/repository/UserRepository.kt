@@ -8,7 +8,7 @@ interface UserRepository {
     suspend fun getUserProfile(token: String): UserProfile
 
     suspend fun updateProfile(token: String, updateProfileBody: UpdateProfileBody)
-    suspend fun addPoints(token: String, points: Int, quizId: Long)
+    suspend fun addPoints(token: String, points: Int, correctAnswers: Int, quizId: Long)
 
     suspend fun updateArtCategory(token: String, artCategoryId: Long)
 

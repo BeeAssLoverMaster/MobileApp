@@ -7,6 +7,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Surface
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -58,6 +61,7 @@ import shkonda.artschools.core.ui.components.OutBtnCustom
 import shkonda.artschools.domain.utils.Dimens
 import shkonda.artschools.domain.utils.Messages
 import shkonda.artschools.presentation.profile_page.edit_profile.EditProfileViewModel
+import shkonda.artschools.presentation.profile_page.profile.GetUserProfileState
 import shkonda.artschools.presentation.utils.UpdateProfileBottomSheetSubTitles
 
 private val EDIT_PROFILE_IMG_SIZE = 176.dp
@@ -69,6 +73,8 @@ fun UpdateProfileScreen(
     viewModel: UpdateProfileViewModel = hiltViewModel()
 ) {
     val updateProfileState by viewModel.updateProfileState.collectAsState()
+    val getUserProfileState by viewModel.getUserProfileState.collectAsState()
+
     var showUploadImgSection by remember { mutableStateOf(false) }
     var selectedImgUri by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
@@ -106,24 +112,45 @@ fun UpdateProfileScreen(
     }
 
     BackHandler(!sheetState.isVisible) {
-        Navigator.navigate(NavScreen.EditProfileScreen.route)
+        Navigator.navigate(NavScreen.ProfileScreen.route)
     }
 
-    UpdateProfileScreenContent(
-        modifier = modifier,
-        viewModel = viewModel,
-        sheetState = sheetState,
-        coroutineScope = coroutineScope,
-        updateProfileState = updateProfileState,
-        galleryLauncher = galleryLauncher,
-        showUploadImgSection = showUploadImgSection,
-        onSaveImgClick = {
-            viewModel.uploadProfilePicture()
-            showUploadImgSection = false
-        },
-        onCancelImgClick = { showUploadImgSection = false },
-        selectedImgUri = selectedImgUri
-    )
+    Surface(modifier = modifier.fillMaxSize()) {
+        Box(modifier = modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .blur(1.dp),
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.6f)) // Полупрозрачный черный цвет
+            )
+            UpdateProfileScreenContent(
+                modifier = modifier,
+                viewModel = viewModel,
+                sheetState = sheetState,
+                coroutineScope = coroutineScope,
+                updateProfileState = updateProfileState,
+                galleryLauncher = galleryLauncher,
+                showUploadImgSection = showUploadImgSection,
+                onSaveImgClick = {
+                    viewModel.uploadProfilePicture()
+                    showUploadImgSection = false
+                },
+                onCancelImgClick = { showUploadImgSection = false },
+                selectedImgUri = selectedImgUri,
+                getUserProfileState
+            )
+        }
+
+    }
+
+
 }
 
 
@@ -139,7 +166,8 @@ private fun UpdateProfileScreenContent(
     showUploadImgSection: Boolean,
     onSaveImgClick: () -> Unit,
     onCancelImgClick: () -> Unit,
-    selectedImgUri: String
+    selectedImgUri: String,
+    getUserProfileState: GetUserProfileState,
 ) {
     if (showUploadImgSection) {
         UploadImageSection(
@@ -149,17 +177,6 @@ private fun UpdateProfileScreenContent(
             onCancelImgClick = onCancelImgClick
         )
     } else {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(top = 16.dp),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            CustomTopBarTitle(
-                modifier = modifier,
-                title = "Update Profile"
-            )
-        }
         Column(
             modifier = modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally

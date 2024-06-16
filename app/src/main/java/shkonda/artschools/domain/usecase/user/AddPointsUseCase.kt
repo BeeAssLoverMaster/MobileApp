@@ -17,11 +17,11 @@ import javax.inject.Inject
 class AddPointsUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke(token: String, points: Int, quizId: Long): Flow<Response<Unit>> = flow {
+    suspend operator fun invoke(token: String, points: Int, correctAnswers: Int, quizId: Long): Flow<Response<Unit>> = flow {
         try {
             emit(Response.Loading)
 
-            emit(Response.Success(data = repository.addPoints(token, points, quizId)))
+            emit(Response.Success(data = repository.addPoints(token, points, correctAnswers, quizId)))
         } catch (e: IOException) {
             emit(Response.Error(errorMessage = Messages.INTERNET))
             Log.e("AddPointsUseCase.kt", e.stackTraceToString())

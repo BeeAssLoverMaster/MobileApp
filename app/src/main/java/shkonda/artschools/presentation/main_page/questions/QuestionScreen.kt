@@ -1,7 +1,7 @@
 package shkonda.artschools.presentation.main_page.questions
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,13 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -46,18 +43,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import shkonda.artschools.R
+import shkonda.artschools.core.common.getCorrectAnswersCount
+import shkonda.artschools.core.common.getToken
 import shkonda.artschools.core.common.loadImage
+import shkonda.artschools.core.common.storeCorrectAnswersCount
 import shkonda.artschools.core.navigation.NavScreen
 import shkonda.artschools.core.navigation.Navigator
-import shkonda.artschools.core.ui.theme.Black
-import shkonda.artschools.core.ui.theme.Grapefruit
 import shkonda.artschools.core.ui.theme.LightBrown
 import shkonda.artschools.core.ui.theme.LightPink
 import shkonda.artschools.core.ui.theme.LightPurple
 import shkonda.artschools.core.ui.theme.LightYellow
 import shkonda.artschools.core.ui.theme.StrangeOrange
 import shkonda.artschools.core.ui.theme.StrangeRed
-import shkonda.artschools.core.ui.theme.Sunset
 import shkonda.artschools.domain.model.question.Answer
 import shkonda.artschools.domain.model.question.Question
 import shkonda.artschools.presentation.main_page.questions.states.getQuestionListState
@@ -260,6 +257,7 @@ fun QuestionScreen(
     var currentQuestionIndex by rememberSaveable { mutableStateOf(0) }
     var selectedOptionId by rememberSaveable { mutableStateOf("") }
     var totalPoints by rememberSaveable { mutableStateOf(0) }
+    var totalCorrectAnswers by rememberSaveable { mutableStateOf(0) }
     var lastSelectedAnswerCorrect by rememberSaveable { mutableStateOf(false) }
 
     Surface(modifier = modifier.fillMaxSize()) {
@@ -313,7 +311,7 @@ fun QuestionScreen(
                                     // Начислите очки, если последний выбранный ответ был правильным
                                     if (lastSelectedAnswerCorrect) {
                                         totalPoints += question.questionValue
-                                        println(totalPoints)
+                                        totalCorrectAnswers++
                                     }
                                     // Переход к следующему вопросу или завершение викторины
                                     if (currentQuestionIndex < questionList.size - 1) {
@@ -321,7 +319,7 @@ fun QuestionScreen(
                                         selectedOptionId = ""
                                         lastSelectedAnswerCorrect = false
                                     } else {
-                                        viewModel.addPointsToUser(totalPoints, quizId) {
+                                        viewModel.addPointsToUser(totalPoints, totalCorrectAnswers, quizId) {
                                             Navigator.navigate(
                                                 NavScreen.ArticleScreen.createArticleRoute(
                                                     quizId

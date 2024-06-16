@@ -25,10 +25,11 @@ interface UserApi {
          @Body updateProfileBodyDto: UpdateProfileBodyDto
      )
 
-     @PUT("api/users/add_points/{points}/{quizId}")
+     @PUT("api/users/add_points/{points}/{correctAnswers}/{quizId}")
      suspend fun addPointsToUser(
          @Header("Authorization") token: String,
          @Path("points") points: Int,
+         @Path("correctAnswers") correctAnswers: Int,
          @Path("quizId") quizId: Long
      )
 

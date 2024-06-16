@@ -47,6 +47,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
@@ -69,10 +70,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import shkonda.artschools.R
 import shkonda.artschools.core.common.loadImage
@@ -80,6 +83,8 @@ import shkonda.artschools.core.ui.theme.Black
 import shkonda.artschools.core.ui.theme.Grapefruit
 import shkonda.artschools.core.ui.theme.LightGray
 import shkonda.artschools.core.ui.theme.Sunset
+import shkonda.artschools.domain.model.schools.School
+import shkonda.artschools.presentation.school_page.states.getAllSchools
 
 data class ArtSchool(
     val id: Long,
@@ -100,18 +105,22 @@ enum class ArtSchoolType(val displayName: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ArtSchoolScreen(modifier: Modifier = Modifier, artSchools: List<ArtSchool>) {
+fun ArtSchoolScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ArtSchoolViewModel = hiltViewModel()
+) {
+    val schoolList = getAllSchools(viewModel)
     var selectedType by remember { mutableStateOf(ArtSchoolType.All) }
     var selectedLocation by remember { mutableStateOf("Все") }
     var selectedPrograms by remember { mutableStateOf(listOf<String>()) }
     var searchQuery by remember { mutableStateOf("") }
     var filtersVisible by remember { mutableStateOf(false) }
 
-    var selectedSchool by remember { mutableStateOf<ArtSchool?>(null) }
+    var selectedSchool by remember { mutableStateOf<School?>(null) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val locations = listOf("Все") + artSchools.map { it.location }.distinct()
-    val programs = artSchools.flatMap { it.programs }.distinct()
+    val locations = listOf("Все") + schoolList.map { it.city }.distinct()
+    val programs = schoolList.flatMap { it.programList.map { it.programName } }.distinct()
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -130,32 +139,38 @@ fun ArtSchoolScreen(modifier: Modifier = Modifier, artSchools: List<ArtSchool>) 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.6f)) // Полупрозрачный черный цвет
+                    .background(Color.Black.copy(alpha = 0.6f))
             )
             Column(modifier = modifier.fillMaxSize()) {
-                // Поле поиска, которое всегда видно
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    label = {
-                        Text(
-                            text = "Поиск школ",
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                fontSize = textSize
-                            ),
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        label = {
+                            Text(
+                                text = "Поиск школ",
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    fontSize = textSize
+                                ),
+                            )
+                        },
+                        modifier = Modifier.weight(1f),
+                        textStyle = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            fontSize = textSize
+                        ),
+                    )
+                    IconButton(onClick = { filtersVisible = !filtersVisible }) {
+                        Icon(
+                            imageVector = Icons.Default.Create,
+                            contentDescription = "Фильтр",
+                            tint = Color.White
                         )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        fontSize = textSize
-                    ),
-                )
-
-
+                    }
+                }
 
                 AnimatedVisibility(
                     visible = filtersVisible,
@@ -194,15 +209,14 @@ fun ArtSchoolScreen(modifier: Modifier = Modifier, artSchools: List<ArtSchool>) 
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val filteredSchools = artSchools.filter { school ->
-                    (selectedLocation == "Все" || school.location == selectedLocation) &&
-                            (selectedPrograms.isEmpty() || selectedPrograms.any { it in school.programs }) &&
-                            (selectedType == ArtSchoolType.All || school.type == selectedType) &&
-                            // Добавляем фильтрацию по поисковому запросу
+                val filteredSchools = schoolList.filter { school ->
+                    (selectedLocation == "Все" || school.city == selectedLocation) &&
+                            (selectedPrograms.isEmpty() || selectedPrograms.any { it in school.programList.map { it.programName } }) &&
+                            (selectedType == ArtSchoolType.All || school.artCategoryName == selectedType.displayName) &&
                             (searchQuery.isBlank() ||
-                                    school.name.lowercase().contains(searchQuery.lowercase()) ||
-                                    school.description.lowercase().contains(searchQuery.lowercase()) ||
-                                    school.location.lowercase().contains(searchQuery.lowercase()))
+                                    school.schoolName.contains(searchQuery, ignoreCase = true) ||
+                                    school.description.contains(searchQuery, ignoreCase = true) ||
+                                    school.city.contains(searchQuery, ignoreCase = true))
                 }
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -219,25 +233,15 @@ fun ArtSchoolScreen(modifier: Modifier = Modifier, artSchools: List<ArtSchool>) 
                     })
                 }
 
-                /*if (showDialog && selectedSchool != null) {
+                if (showDialog && selectedSchool != null) {
                     ArtSchoolDialog(
                         modifier = modifier,
                         school = selectedSchool!!,
                         onDismiss = { showDialog = false })
-                }*/
-
-                Row {
-                    Button(onClick = {
-                        filtersVisible = !filtersVisible
-                    }) {
-                        Text(if (filtersVisible) "Скрыть фильтры" else "Показать фильтры")
-                    }
                 }
             }
         }
     }
-
-
 }
 
 
@@ -254,7 +258,7 @@ fun ArtSchoolTypeSelector(selectedType: ArtSchoolType, onTypeSelected: (ArtSchoo
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            ArtSchoolType.entries.forEach { type ->
+            ArtSchoolType.values().forEach { type ->
                 DropdownMenuItem(
                     text = {
                         Text(text = type.displayName)
@@ -330,7 +334,7 @@ fun ProgramSelector(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
                             checked = isSelected,
-                            onCheckedChange = null // We'll handle changing in the onClick of the MenuItem
+                            onCheckedChange = null
                         )
                         Text(text = program)
                     }
@@ -361,20 +365,18 @@ fun ArtSchoolFilter(
 ) {
     Column {
         ArtSchoolTypeSelector(selectedType, onTypeSelected)
-//        SearchBar(searchQuery, onSearchQueryChanged)
     }
 }
 
 @Composable
 fun ArtSchoolCard(
     modifier: Modifier,
-    artSchool: ArtSchool
+    artSchool: School
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val textSchoolNameSize = (screenWidth / 18).value.sp
     val textSchoolAddressSize = (screenWidth / 32).value.sp
-    val cardSize = (screenWidth / 1)
 
     Card(
         modifier = modifier
@@ -390,11 +392,11 @@ fun ArtSchoolCard(
                     .fillMaxWidth()
                     .align(Alignment.Start)
                     .height(210.dp),
-                imageUrl = artSchool.imageUrl
+                imageUrl = artSchool.schoolImageName
             )
             Column(modifier = modifier.padding(start = 8.dp, top = 8.dp, end = 8.dp)) {
                 Text(
-                    text = artSchool.name,
+                    text = artSchool.schoolName,
                     style = TextStyle(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Black,
@@ -405,7 +407,7 @@ fun ArtSchoolCard(
                 )
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Text(
-                    text = artSchool.location,
+                    text = "${artSchool.city}, ${artSchool.street}",
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = Color.Gray,
@@ -421,93 +423,13 @@ fun ArtSchoolCard(
 }
 
 @Composable
-fun ImageCard(modifier: Modifier, imageUrl: Int) {
-    /*AsyncImage(
-            model = imageUrl,
-            contentDescription = "School Image",
-            modifier = modifier,
-            contentScale = ContentScale.Crop
-        )*/
-    Image(
+fun ImageCard(modifier: Modifier, imageUrl: String) {
+    AsyncImage(
         modifier = modifier,
-        painter = painterResource(id = imageUrl),
-        contentDescription = "Школа",
+        model = loadImage(context = LocalContext.current, imageUrl),
+        contentDescription = "Изображение категорий",
         contentScale = ContentScale.Crop
     )
-}
-
-/*val fakeArtSchoolList = listOf(
-    ArtSchool(
-        id = 0L,
-        name = "Художественная школа имени Цивелёва Г.А.",
-        description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
-        location = "Комсомольск-на-Амуре, ул. Пушкина, дом Колотушкина",
-        imageUrl = "books.png",
-        type = ArtSchoolType.Music,
-        programs = listOf("violin", "piano", "guitar")
-    ),
-    ArtSchool(
-        id = 1L,
-        name = "Danny Trejo Art School No. 1",
-        description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
-        location = "Хабаровск, ул. Пушкина, дом Колотушкина",
-        imageUrl = "books.png",
-        type = ArtSchoolType.Music,
-        programs = listOf("violin", "piano", "guitar", "balalaika")
-    ),
-    ArtSchool(
-        id = 2L,
-        name = "Danny Trejo Art School No. 2",
-        description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
-        location = "Комсомольск-на-Амуре, ул. Пушкина, дом Колотушкина",
-        imageUrl = "books.png",
-        type = ArtSchoolType.Music,
-        programs = listOf("violin", "piano", "guitar", "gormoshka")
-    ),
-    ArtSchool(
-        id = 3L,
-        name = "Danny Trejo Art School No. 3",
-        description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
-        location = "Владивосток, ул. Пушкина, дом Колотушкина",
-        imageUrl = "books.png",
-        type = ArtSchoolType.Music,
-        programs = listOf("violin", "piano")
-    ),
-    ArtSchool(
-        id = 4L,
-        name = "Школа Искусств №1 имени Макси Ляхо",
-        description = "Прекрасная школа, которая обучает искусству по методике Дани Трэгхо, великого искусствоведа",
-        location = "Комсомольск-на-Амуре, ул. Пушкина, дом Колотушкина",
-        imageUrl = "books.png",
-        type = ArtSchoolType.Visual,
-        programs = listOf("paint")
-    )
-)*/
-
-@Preview(name = "Small Phone Preview", widthDp = 320, heightDp = 568)
-@Preview(name = "Medium Phone Preview", widthDp = 360, heightDp = 640)
-@Preview(name = "Large Phone Preview", widthDp = 411, heightDp = 731)
-@Preview(name = "Extra Large Phone Preview", widthDp = 480, heightDp = 800)
-@Composable
-private fun ArtScoolScreenPrev() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = R.drawable.background),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .blur(1.dp),
-                contentScale = ContentScale.Crop
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.6f)) // Полупрозрачный черный цвет
-            )
-//            ArtSchoolScreen(modifier = Modifier, artSchools = fakeArtSchoolList)
-        }
-    }
 }
 
 @Composable
@@ -549,41 +471,16 @@ fun Chip(label: String, onRemove: () -> Unit, isSelected: Boolean) {
     }
 }
 
-/*
-@Preview
 @Composable
-private fun DialogPrev() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = R.drawable.background),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .blur(1.dp),
-                contentScale = ContentScale.Crop
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.6f)) // Полупрозрачный черный цвет
-            )
-            ArtSchoolScreen(modifier = Modifier, artSchools = fakeArtSchoolList)
-        }
-    }
-
-    ArtSchoolDialog(modifier = Modifier, school = fakeArtSchoolList[0]) {}
-}
-@Composable
-fun ArtSchoolDialog(modifier: Modifier, school: ArtSchool, onDismiss: () -> Unit) {
-    var schoolPrograms = school.programs.joinToString(" ")
-
+fun ArtSchoolDialog(modifier: Modifier, school: School, onDismiss: () -> Unit) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val textSchoolNameSize = (screenWidth / 14).value.sp
     val textSchoolAddressSize = (screenWidth / 24).value.sp
     val labelSize = (screenWidth / 16).value.sp
     val defaultTextSize = (screenWidth / 24).value.sp
+    val primaryColor = Color(0xFF6200EE)  // Основной акцентный цвет
+    val secondaryColor = Color(0xFFEEEEEE)  // Вторичный акцентный цвет
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -592,28 +489,29 @@ fun ArtSchoolDialog(modifier: Modifier, school: ArtSchool, onDismiss: () -> Unit
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(16.dp)  // Устанавливаем отступы со всех сторон в 16.dp
-                .background(color = Color.LightGray*/
-/*.copy(alpha = 0.7f)*//*
-, shape = RoundedCornerShape(12.dp))
+                .padding(16.dp)
+                .background(
+                    color = Color.LightGray, shape = RoundedCornerShape(12.dp)
+                )
         ) {
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()).padding(16.dp) ,  // Добавляем вертикальный скролл
-//                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = school.name,
+                    text = school.schoolName,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black,
+                        color = primaryColor,
                         fontSize = textSchoolNameSize
                     ),
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = school.location,
+                    text = "${school.city}, ${school.street}",
                     style = TextStyle(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Black,
@@ -623,15 +521,7 @@ fun ArtSchoolDialog(modifier: Modifier, school: ArtSchool, onDismiss: () -> Unit
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Описание",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        fontSize = labelSize
-                    ),
-                )
-//                Spacer(modifier = Modifier.height(8.dp))
+                SectionTitle("Описание", primaryColor, labelSize)
                 Text(
                     text = school.description,
                     style = TextStyle(
@@ -642,47 +532,60 @@ fun ArtSchoolDialog(modifier: Modifier, school: ArtSchool, onDismiss: () -> Unit
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Направления обучения",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        fontSize = labelSize
-                    )
-                )
-                Text(
-                    text = schoolPrograms,
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = defaultTextSize
-                    )
-                )
+                SectionTitle("Направления обучения", primaryColor, labelSize)
+                Column {
+                    school.programList.forEach { program ->
+                        ProgramCard(programName = program.programName, secondaryColor)
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Работы школы",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        fontSize = labelSize
-                    )
-                )
-                ArtWorksGallery()
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Text(
-                    text = "Преподавательский состав",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                TeachingStaffGallery()
+//                SectionTitle("Преподавательский состав", primaryColor, labelSize)
+                // Здесь можно добавить информацию о преподавательском составе
             }
         }
     }
 }
-*/
+
+@Composable
+fun SectionTitle(title: String, color: Color, fontSize: TextUnit) {
+    Text(
+        text = title,
+        style = TextStyle(
+            fontWeight = FontWeight.Bold,
+            color = color,
+            fontSize = fontSize
+        )
+    )
+}
+
+@Composable
+fun ProgramCard(programName: String, backgroundColor: Color) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = 4.dp,
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = backgroundColor
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Text(
+                text = programName,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontSize = 16.sp
+                ),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        }
+    }
+}
 
 
 @Composable

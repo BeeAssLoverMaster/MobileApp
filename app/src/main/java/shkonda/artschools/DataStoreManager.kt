@@ -28,6 +28,7 @@ class DataStoreManager(val context: Context) {
             "",
             pref[stringPreferencesKey("profilePicture")] ?: "null",
             0,
+            0,
             0
         )
     }

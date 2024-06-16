@@ -14,6 +14,7 @@ import shkonda.artschools.data.data_source.arts.genre.api.ArtGenresApi
 import shkonda.artschools.data.data_source.arts.type.api.ArtTypesApi
 import shkonda.artschools.data.data_source.question.api.QuestionApi
 import shkonda.artschools.data.data_source.quizzes.api.QuizApi
+import shkonda.artschools.data.data_source.schools.api.SchoolApi
 import shkonda.artschools.data.data_source.user.api.UserApi
 import javax.inject.Singleton
 
@@ -113,5 +114,16 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(QuestionApi::class.java)
+    }
+
+    //schools
+    @Provides
+    @Singleton
+    fun provideSchoolApi(): SchoolApi {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(SchoolApi::class.java)
     }
 }

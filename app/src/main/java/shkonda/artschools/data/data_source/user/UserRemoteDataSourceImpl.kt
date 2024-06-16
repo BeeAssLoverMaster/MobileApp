@@ -9,8 +9,8 @@ import javax.inject.Inject
 class UserRemoteDataSourceImpl @Inject constructor(private val api: UserApi) : UserRemoteDataSource {
 
     override suspend fun getUserProfile(token: String): UserProfileDto = api.getUserProfile(token)
-    override suspend fun addPointsToUser(token: String, points: Int, quizId: Long) =
-        api.addPointsToUser(token, points, quizId)
+    override suspend fun addPointsToUser(token: String, points: Int,correctAnswers: Int, quizId: Long) =
+        api.addPointsToUser(token, points, correctAnswers, quizId)
 
     override suspend fun updateProfile(token: String, updateProfileBodyDto: UpdateProfileBodyDto) =
         api.updateProfile(token = token, updateProfileBodyDto = updateProfileBodyDto)

@@ -40,7 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import shkonda.artschools.R
 import shkonda.artschools.core.ui.components.CustomScaffold
-import shkonda.artschools.presentation.auth_page.sign_in.states.SignInScreen
+import shkonda.artschools.presentation.auth_page.sign_in.SignInScreen
 import shkonda.artschools.presentation.auth_page.sign_up.SignUpScreen
 import shkonda.artschools.presentation.main_page.art_genres.ArtGenresScreen
 import shkonda.artschools.presentation.main_page.article.ArticleScreen
@@ -108,7 +108,7 @@ fun NavGraph(
             }
             composable(NavScreen.ArtSchoolScreen.route) {
                 ArtSchoolScreen(
-                    artSchools = listOf(
+                    /*artSchools = listOf(
                         ArtSchool(
                             id = 0L,
                             name = "Художественная школа имени Цивелёва Г.А.",
@@ -145,7 +145,7 @@ fun NavGraph(
                             type = ArtSchoolType.Music,
                             programs = listOf("violin", "piano", "guitar")
                         )
-                    ),
+                    ),*/
                 )
             }
             composable(NavScreen.ProfileScreen.route) {
@@ -352,7 +352,7 @@ private fun BottomAppBar(
                                 bottomStart = 0.dp
                             )
                         ),
-                    backgroundColor = Color(0xFF1E2245).copy(alpha = 0.1f), // Custom background color
+                    backgroundColor = Color(0xFF1E2245)/*.copy(alpha = 0.1f)*/, // Custom background color
                     elevation = 0.dp
                 ) {
                     BottomAppBarContent(

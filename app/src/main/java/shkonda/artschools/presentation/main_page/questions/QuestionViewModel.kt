@@ -60,8 +60,8 @@ open class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun addPointsToUser(points: Int, quizId: Long, onPointsAdded: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-        addPointsUseCase(token = "Bearer $token", points, quizId).collect() { response ->
+    fun addPointsToUser(points: Int, correctAnswers: Int, quizId: Long, onPointsAdded: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+        addPointsUseCase(token = "Bearer $token", points, correctAnswers, quizId).collect() { response ->
             when (response) {
                 is Response.Loading -> {
                     _questionListState.value = QuestionListState.Loading

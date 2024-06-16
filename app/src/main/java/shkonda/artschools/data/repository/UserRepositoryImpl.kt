@@ -20,8 +20,8 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: UserR
             updateProfileBodyDto = updateProfileBody.toUpdateProfileBodyDto()
         )
 
-    override suspend fun addPoints(token: String, points: Int, quizId: Long) =
-        remoteDataSource.addPointsToUser(token, points, quizId)
+    override suspend fun addPoints(token: String, points: Int, correctAnswers: Int, quizId: Long) =
+        remoteDataSource.addPointsToUser(token, points, correctAnswers, quizId)
 
     override suspend fun updateArtCategory(token: String, artCategoryId: Long) =
         remoteDataSource.updateArtCategory(

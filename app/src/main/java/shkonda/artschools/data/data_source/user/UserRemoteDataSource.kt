@@ -7,7 +7,7 @@ import shkonda.artschools.data.data_source.user.entity.UserProfileDto
 interface UserRemoteDataSource {
 
     suspend fun getUserProfile(token: String): UserProfileDto
-    suspend fun addPointsToUser(token: String, points: Int, quizId: Long)
+    suspend fun addPointsToUser(token: String, points: Int, correctAnswers: Int, quizId: Long)
     suspend fun updateProfile(token: String, updateProfileBodyDto: UpdateProfileBodyDto)
     suspend fun updateArtCategory(token: String, artCategoryId: Long)
 

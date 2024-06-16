@@ -7,5 +7,6 @@ class UserProfile(
     val bio: String,
     val profileImage: String,
     val artCategory: Long,
-    val points: Int
+    val points: Int,
+    val correctAnswers: Int
 )

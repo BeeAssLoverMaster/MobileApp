@@ -7,5 +7,6 @@ data class UserProfileDto(
     @SerializedName("bio") val bio: String,
     @SerializedName("profilePictureUrl") val image: String,
     @SerializedName("artCategory") val artCategory: Long,
-    @SerializedName("points") val points: String
+    @SerializedName("points") val points: String,
+    @SerializedName("correctAnswers") val correctAnswers: String
 )

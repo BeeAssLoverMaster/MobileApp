@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
                         // Если токен существует, устанавливаем начальной точкой графа экран HomeScreen
                         NavGraph(startDestination = NavScreen.HomeScreen.route)
                     }
+//                    NavGraph(startDestination = NavScreen.SignInScreen.route)
                 }
             }
         }

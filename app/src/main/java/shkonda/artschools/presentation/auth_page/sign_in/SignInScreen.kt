@@ -1,4 +1,4 @@
-package shkonda.artschools.presentation.auth_page.sign_in.states
+package shkonda.artschools.presentation.auth_page.sign_in
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -45,8 +45,7 @@ import shkonda.artschools.core.ui.components.CustomLoadingSpinner
 import shkonda.artschools.core.ui.components.OTFCustom
 import shkonda.artschools.core.ui.theme.CustomBlue
 import shkonda.artschools.core.ui.theme.CustomBrown
-import shkonda.artschools.presentation.auth_page.sign_in.SignInState
-import shkonda.artschools.presentation.auth_page.sign_in.SignInViewModel
+import shkonda.artschools.presentation.auth_page.sign_in.states.SignInInputFieldState
 
 
 @Composable /* Создание экрана входа в систему */

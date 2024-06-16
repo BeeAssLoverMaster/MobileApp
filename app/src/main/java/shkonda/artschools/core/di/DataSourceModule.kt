@@ -20,6 +20,8 @@ import shkonda.artschools.data.data_source.question.QuestionRemoteDataSource
 import shkonda.artschools.data.data_source.question.QuestionRemoteDataSourceImpl
 import shkonda.artschools.data.data_source.quizzes.QuizRemoteDataSource
 import shkonda.artschools.data.data_source.quizzes.QuizRemoteDataSourceImpl
+import shkonda.artschools.data.data_source.schools.SchoolRemoteDataSource
+import shkonda.artschools.data.data_source.schools.SchoolRemoteDataSourceImpl
 import shkonda.artschools.data.data_source.user.UserRemoteDataSource
 import shkonda.artschools.data.data_source.user.UserRemoteDataSourceImpl
 import javax.inject.Singleton
@@ -67,4 +69,10 @@ abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindQuestionRemoteDataSource(questionRemoteDataSourceImpl: QuestionRemoteDataSourceImpl): QuestionRemoteDataSource
+
+    //schools
+    @Binds
+    @Singleton
+    abstract fun bindSchoolRemoteDataSource(schoolRemoteDataSourceImpl: SchoolRemoteDataSourceImpl): SchoolRemoteDataSource
+
 }

@@ -75,7 +75,9 @@ fun ArtGenresScreen(modifier: Modifier = Modifier, typeId: Long, viewModelArt: A
     }
 }
 @Composable
-fun ArtGenresScreenContent(modifier: Modifier, user: UserProfile?, artCategory: ArtCategory?, artCategoryList: List<ArtCategory>, artGenreList: List<ArtGenre>, typeId: Long, viewModelHome: HomeViewModel) {
+fun ArtGenresScreenContent(modifier: Modifier, user: UserProfile?,
+                           artCategory: ArtCategory?, artCategoryList: List<ArtCategory>,
+                           artGenreList: List<ArtGenre>, typeId: Long, viewModelHome: HomeViewModel) {
     Column(modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
             TopBarSection(modifier = modifier, user = user, artCategory = artCategory, artCategoryList = artCategoryList, viewModel = viewModelHome)

@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import shkonda.artschools.DataStoreManager
 import shkonda.artschools.core.common.Response
 import shkonda.artschools.core.common.getToken
+import shkonda.artschools.core.navigation.NavScreen
+import shkonda.artschools.core.navigation.Navigator
 import shkonda.artschools.domain.model.user.UserProfile
 import shkonda.artschools.domain.usecase.user.GetUserProfileUseCase
 import javax.inject.Inject
@@ -61,4 +63,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun refreshUserProfile() {
+        getUserProfile()
+    }
+
+    fun navigateUpdateScreen() {
+        Navigator.navigate(NavScreen.UpdateProfileScreen.route) {}
+    }
 }

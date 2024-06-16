@@ -22,6 +22,8 @@ import shkonda.artschools.data.repository.art.ArtTypesRepository
 import shkonda.artschools.data.repository.question.QuestionRepository
 import shkonda.artschools.data.repository.question.QuestionRepositoryImpl
 import shkonda.artschools.data.repository.quiz.QuizRepository
+import shkonda.artschools.data.repository.schools.SchoolRepository
+import shkonda.artschools.data.repository.schools.SchoolRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -68,4 +70,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindQuestionRepository(questionRepositoryImpl: QuestionRepositoryImpl): QuestionRepository
+
+    //schools
+    @Binds
+    @Singleton
+    abstract fun bindSchoolRepository(schoolRepositoryImpl: SchoolRepositoryImpl): SchoolRepository
+
 }
